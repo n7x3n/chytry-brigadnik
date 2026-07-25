@@ -42,10 +42,20 @@
             <button type="button" id="cancel-btn">Zrušit</button>
         </form>
     </dialog>
+    <dialog id="detail-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="detail-title">Název práce</h2>
+            <button type="button" id="close-detail-btn">✕</button>
+        </div>
+        <hr>
+        <div id="detail-content">
+            <p id="detail-rate" style="color: #22c55e; font-size: 1.2rem; font-weight: bold;"></p>
+        </div>
+    </dialog>
     <main>
+        <div id="dashboard">
 
-        <section id="dashboard">
-        </section>
+        </div>
     </main>
 
     <script type="module" src="main.js"></script>
