@@ -1,79 +1,135 @@
 * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: #09090b;
+    color: #f4f4f5;
+    min-height: 100vh;
+    width: 100%;
+}
+
+header {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    background-color: #18181b;
+    border-bottom: 1px solid #27272a;
+}
+
+.header-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f4f4f5;
+    text-align: center;
+}
+
+#settings-btn,
+#add-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #27272a;
+    border-radius: 8px;
+    background-color: #27272a;
+    color: #f4f4f5;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#settings-btn:hover,
+#add-btn:hover {
+    background-color: #3f3f46;
+}
+
+main {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+#dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+dialog {
+    background-color: #18181b;
+    color: #f4f4f5;
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 24px;
+    margin: auto;
+    max-width: 90%;
+    width: 360px;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+dialog#detail-modal[open] {
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 500px;
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
     }
 
-    body {
-        background-color: #09090b;
-        color: #f4f4f5;
-        min-height: 100vh;
-        width: 100%;
+    to {
+        transform: translateY(0);
     }
+}
 
-    header {
-        width: 100%;
-        height: 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 16px;
-        background-color: #18181b;
-        border-bottom: 1px solid #27272a;
-    }
+.sheet-handle {
+    width: 40px;
+    height: 4px;
+    background-color: #3f3f46;
+    border-radius: 2px;
+    margin: 0 auto 12px auto;
+}
 
-    .header-text {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #f4f4f5;
-        text-align: center;
-    }
+.job-card {
+    background-color: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
 
-    #settings-btn, #add-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border: 1px solid #27272a;
-        border-radius: 8px;
-        background-color: #27272a;
-        color: #f4f4f5;
-        font-size: 1.2rem;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    #settings-btn:hover, #add-btn:hover {
-        background-color: #3f3f46;
-    }
-
-    main {
-        width: 100%;
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 16px;
-    }
-
-    #dashboard {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        margin-top: 16px;
-    }
-    dialog {
-        background-color: #18181b;
-        color: #f4f4f5;
-        border: 1px solid #27272a;
-        border-radius: 16px;
-        padding: 24px;
-        margin: auto;
-        max-width: 90%;
-        width: 360px;
-    }
-
-    dialog::backdrop {
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(4px);
-    }
+.job-card:active {
+    transform: scale(0.98);
+}
