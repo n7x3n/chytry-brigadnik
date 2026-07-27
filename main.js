@@ -4,6 +4,8 @@ import { saveJobs, loadJobs } from './storage.js';
 const addBtn = document.getElementById('add-btn');
 const cnlBtn = document.getElementById('cancel-btn');
 const jobForm = document.getElementById('job-form');
+const addShiftBtn = document.getElementById('add-shift-btn');
+const cnlShiftBtn = document.getElementById('close-shift-btn');
 //
 
 //functions
@@ -76,7 +78,13 @@ jobForm.addEventListener('submit', async (event) => {
     console.log("data successfuly stored")
     renderJobs(jobs);
 })
+addShiftBtn.addEventListener('click', () =>{
+    document.getElementById('shift-modal').showModal();
+})
 
+cnlShiftBtn.addEventListener('click', () =>{
+    document.getElementById('shift-modal').close();
+})
 async function initApp() {
     const jobs = await loadJobs();
     renderJobs(jobs);

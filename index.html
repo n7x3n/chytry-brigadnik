@@ -71,6 +71,32 @@
                 práci</button>
         </div>
     </dialog>
+    <dialog id="shift-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Přidat Směnu</h3>
+            <button type="button" id="close-shift-btn">✕</button>
+        </div>
+        <hr style="margin-bottom: 15px;">
+        <form id="shift-form">
+            <div>
+                <label for="shift-date">Datum</label>
+                <input type="date" id="shift-date" required>
+            </div>
+            <div>
+                <label for="clock-in-input">Začátek</label>
+                <input type="time" name="" id="clock-in-input" required>
+            </div>
+            <div>
+                <label for="clock-out-input">Konec</label>
+                <input type="time" name="" id="clock-out-input" required>
+            </div>
+            <div>
+                <label for="shift-note">Poznámka</label>
+                <input type="text" id="shift-note" placeholder="(netřeba vyplnit)">
+                <button type="submit" style="margin-top: 15px; width: 100%; border-radius: 8px;">Uložit směnu</button>
+            </div>
+        </form>
+    </dialog>
     <main>
         <div id="dashboard">
 
