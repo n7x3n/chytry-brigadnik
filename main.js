@@ -6,6 +6,8 @@ const cnlBtn = document.getElementById('cancel-btn');
 const jobForm = document.getElementById('job-form');
 const addShiftBtn = document.getElementById('add-shift-btn');
 const cnlShiftBtn = document.getElementById('close-shift-btn');
+const shiftForm = document.getElementById('shift-form');
+let currentJobId = null;
 //
 
 //functions
@@ -28,10 +30,10 @@ function renderJobs(jobs) {
         `;
         card.addEventListener('click', () => openJobDetail(job));
         dashboard.appendChild(card);
-
     });
 }
 function openJobDetail(job) {
+    currentJobId = job.id;
     document.getElementById('detail-title').innerText = job.config.jobName;
     document.getElementById('detail-rate').innerText = `${job.config.jobRate} Kč/h`;
     document.getElementById('detail-modal').showModal();
@@ -40,6 +42,7 @@ function openJobDetail(job) {
     });
 }
 //
+
 addBtn.addEventListener('click', () => {
     document.getElementById('job-modal').showModal();
 })
@@ -78,12 +81,36 @@ jobForm.addEventListener('submit', async (event) => {
     console.log("data successfuly stored")
     renderJobs(jobs);
 })
-addShiftBtn.addEventListener('click', () =>{
+addShiftBtn.addEventListener('click', () => {
     document.getElementById('shift-modal').showModal();
 })
 
-cnlShiftBtn.addEventListener('click', () =>{
+cnlShiftBtn.addEventListener('click', () => {
     document.getElementById('shift-modal').close();
+})
+shiftForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    let jobs = await loadJobs();
+    const targetJob = jobs.find(j => j.id === currentJobId);
+    const shiftDate = document.getElementById('shift-date').value;
+    const clockIn = document.getElementById('clock-in-input').value;
+    const clockOut = document.getElementById('clock-out-input').value;
+    const shiftNote = document.getElementById('shift-note').value || "žádná poznámka";
+    if (targetJob) {
+        const newShift = {
+            id: Date.now(),
+            jobrate: targetJob.config.jobRate,
+            shiftDate: shiftDate,
+            clockIn: clockIn,
+            clockOut: clockOut,
+            shiftNote: shiftNote
+        }
+        targetJob.shifts.push(newShift);
+        await saveJobs(jobs);
+        document.getElementById('shift-modal').close();
+        shiftForm.reset();
+    }
+    console.log("Shift has been successfully saved");
 })
 async function initApp() {
     const jobs = await loadJobs();
