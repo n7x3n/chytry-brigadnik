@@ -122,3 +122,16 @@ export function wageCalculator(hours, rate, vacHours, vacRate, reward, payer, in
         empSocial: emp_soc_insur
     };
 }
+
+// counting shift hours
+export function shiftHours(clockIn, clockOut) {
+    const [inH, inM] = clockIn.split(':').map(Number);
+    const [outH, outM] = clockOut.split(':').map(Number);
+    let startMin = inH * 60 + inM;
+    let endMin = outH * 60 + outM;
+    if (endMin < startMin) {
+        endMin += 24 * 60;
+    }
+    const duration = (endMin - startMin) / 60;
+    return parseFloat(duration.toFixed(2));
+}
