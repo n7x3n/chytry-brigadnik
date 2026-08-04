@@ -44,32 +44,42 @@
     </dialog>
     <dialog id="detail-modal">
         <div class="sheet-handle"></div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 id="detail-title">Název práce</h2>
-            <button type="button" id="close-detail-btn">✕</button>
-        </div>
-        <hr>
-        <div id="detail-content">
-            <p id="detail-rate" style="color: #22c55e; font-size: 1.2rem; font-weight: bold;"></p>
-        </div>
-        <div id="month-selector"
-            style="display: flex; justify-content: space-between; align-items:center; margin: 10px 0;">
-            <button type="button" id="prev-month-btn">&lt;</button>
-            <h3 id="current-month-display">Červenec 2026</h3>
-            <button type="button" id="next-month-btn">&gt;</button>
-        </div>
-        <div id="calendar-grid"></div>
+        <div id="detail-overview">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="detail-title">Název práce</h2>
+                <button type="button" id="close-detail-btn">✕</button>
+            </div>
+            <hr>
+            <div id="detail-content">
+                <p id="detail-rate" style="color: #22c55e; font-size: 1.2rem; font-weight: bold;"></p>
+            </div>
+            <div id="month-selector"
+                style="display: flex; justify-content: space-between; align-items:center; margin: 10px 0;">
+                <button type="button" id="prev-month-btn">&lt;</button>
+                <h3 id="current-month-display">Červenec 2026</h3>
+                <button type="button" id="next-month-btn">&gt;</button>
+            </div>
+            <div id="calendar-grid"></div>
 
-        <button type="button" id="add-shift-btn" style="width: 100%; margin-top: 10px;">+ Přidat
-            směnu</button>
-        <button type="button" id="show-shift-list" style="width: 100%; margin-top: 10px;">Zobrazit seznam směn</button>
-        <hr>
-        <div id="detail-summary-table">
+            <button type="button" id="add-shift-btn" style="width: 100%; margin-top: 10px;">+ Přidat
+                směnu</button>
+            <button type="button" id="show-shift-list" style="width: 100%; margin-top: 10px;">Zobrazit seznam
+                směn</button>
+            <hr>
+            <div id="detail-summary-table">
+            </div>
+            <hr>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="button" id="delete-job-btn" style="background-color: #ef4444; color: white;">Smazat
+                    práci</button>
+            </div>
         </div>
-        <hr>
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-            <button type="button" id="delete-job-btn" style="background-color: #ef4444; color: white;">Smazat
-                práci</button>
+        <div id="shift-list" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>Seznam směn</h3>
+                <button type="button" id="back-to-overview-btn">Zpět</button>
+            </div>
+            <div id="shift-list-container"></div>
         </div>
     </dialog>
     <dialog id="shift-modal">
