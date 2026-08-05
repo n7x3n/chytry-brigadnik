@@ -10,6 +10,7 @@ const shiftForm = document.getElementById('shift-form');
 const shiftList = document.getElementById('show-shift-list');
 const cnlShiftList = document.getElementById('back-to-overview-btn');
 let currentJobId = null;
+let editingShiftId = null;
 //
 
 //functions
@@ -43,6 +44,15 @@ function openJobDetail(job) {
         document.getElementById('detail-modal').close();
     });
 }
+function editShift(shift) {
+    editingShiftId = shift.id
+    document.getElementById('shift-date').value = shift.shiftDate;
+    document.getElementById('clock-in-input').value = shift.clockIn;
+    document.getElementById('clock-out-input').value = shift.clockOut;
+    document.getElementById('shift-note').value = shift.shiftNote;
+    document.getElementById('shift-modal-title').innerText = "Upravit směnu";
+    document.getElementById('shift-modal').showModal();
+}
 function renderShiftList(job) {
     const container = document.getElementById('shift-list-container');
     container.innerHTML = ``
@@ -67,9 +77,18 @@ function renderShiftList(job) {
                     <br>
                     <small style="color: #a1a1aa;">📝 ${shift.shiftNote}</small>
                 </div>
-                <button type="button" class="del-shift-btn" 
-                style="background: #ef4444; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
-                🗑️</button>`;
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="edit-shift-btn" style="background: #27272a; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                    ✏️
+                    </button>
+                    <button type="button" class="del-shift-btn" style="background: #ef4444; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                    🗑️
+                    </button>
+                </div>`;
+        //editing shift button
+        const editBtn = card.querySelector('.edit-shift-btn');
+        editBtn.addEventListener('click', () => editShift(shift));
+        //deleting shift button
         const delBtn = card.querySelector('.del-shift-btn');
         delBtn.addEventListener('click', () => deleteShift(shift.id));
         container.appendChild(card);
@@ -126,6 +145,8 @@ jobForm.addEventListener('submit', async (event) => {
     renderJobs(jobs);
 })
 addShiftBtn.addEventListener('click', () => {
+    editingShiftId = null;
+    shiftForm.reset();
     document.getElementById('shift-modal').showModal();
 })
 
@@ -142,19 +163,32 @@ shiftForm.addEventListener('submit', async (event) => {
     const hours = shiftHours(clockIn, clockOut);
     const shiftNote = document.getElementById('shift-note').value || "žádná poznámka";
     if (targetJob) {
-        const newShift = {
-            id: Date.now(),
-            jobrate: targetJob.config.jobRate,
-            shiftDate: shiftDate,
-            clockIn: clockIn,
-            clockOut: clockOut,
-            hours: hours,
-            shiftNote: shiftNote
+        if (editingShiftId) {
+            const existing = targetJob.shifts.find(s => s.id === editingShiftId);
+            if (existing) {
+                existing.shiftDate = shiftDate;
+                existing.clockIn = clockIn;
+                existing.clockOut = clockOut;
+                existing.hours = hours;
+                existing.shiftNote = shiftNote;
+            }
+        } else {
+            const newShift = {
+                id: Date.now(),
+                jobrate: targetJob.config.jobRate,
+                shiftDate: shiftDate,
+                clockIn: clockIn,
+                clockOut: clockOut,
+                hours: hours,
+                shiftNote: shiftNote
+            };
+            targetJob.shifts.push(newShift);
         }
-        targetJob.shifts.push(newShift);
         await saveJobs(jobs);
+        renderShiftList(targetJob);
         document.getElementById('shift-modal').close();
         shiftForm.reset();
+        editingShiftId = null;
     }
     console.log("Shift has been successfully saved");
 })
