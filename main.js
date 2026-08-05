@@ -12,6 +12,17 @@ const cnlShiftList = document.getElementById('back-to-overview-btn');
 let currentJobId = null;
 let editingShiftId = null;
 const deleteJobBtn = document.getElementById('delete-job-btn');
+// getting date and month
+const today = new Date();
+let currentYear = today.getFullYear();
+let currentMonth = today.getMonth();
+// array of Months
+const MONTH_NAMES = [
+    "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+    "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"
+];
+const prevMonthBtn = document.getElementById('prev-month-btn');
+const nextMonthBtn = document.getElementById('next-month-btn');
 //
 
 //functions
@@ -36,10 +47,11 @@ function renderJobs(jobs) {
         dashboard.appendChild(card);
     });
 }
-function openJobDetail(job) {
+async function openJobDetail(job) {
     currentJobId = job.id;
     document.getElementById('detail-title').innerText = job.config.jobName;
     document.getElementById('detail-rate').innerText = `${job.config.jobRate} Kč/h`;
+    await updateMonthView();
     document.getElementById('detail-modal').showModal();
     document.getElementById('close-detail-btn').addEventListener('click', () => {
         document.getElementById('detail-modal').close();
@@ -62,7 +74,8 @@ function renderShiftList(job) {
         Zatím žádné odpracované směny.</p >`;
         return;
     }
-    job.shifts.forEach(shift => {
+    const sortedShifts = [...job.shifts].sort((a, b) => new Date(b.shiftDate) - new Date(a.shiftDate));
+    sortedShifts.forEach(shift => {
         const hours = shiftHours(shift.clockIn, shift.clockOut);
         const pay = Math.ceil(hours * shift.jobrate);
         const card = document.createElement('div');
@@ -102,8 +115,36 @@ async function deleteShift(shiftId) {
         targetJob.shifts = targetJob.shifts.filter(s => s.id !== shiftId);
         await saveJobs(jobs);
         renderShiftList(targetJob);
+        await updateMonthView()
         console.log("Shift successfully deleted.");
     }
+}
+async function updateMonthView() {
+    let jobs = await loadJobs();
+    const activeJob = jobs.find(j => j.id === currentJobId);
+    if (!activeJob) return;
+    document.getElementById('current-month-display').innerText = `${MONTH_NAMES[currentMonth]} ${currentYear}`;
+    renderSummaryTable(activeJob);
+}
+function renderSummaryTable(job) {
+    const container = document.getElementById('detail-summary-table');
+    if (!container) return;
+    const monthlyShifts = job.shifts.filter(shift => {
+        const [y, m, d] = shift.shiftDate.split('-').map(Number);
+        return y === currentYear && (m - 1) === currentMonth;
+    });
+    const totalHours = monthlyShifts.reduce((sum, shift) => sum + shift.hours, 0);
+    const totalGross = Math.ceil(totalHours * job.config.jobRate);
+    container.innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>Odpracované hodiny:</span>
+                <strong>${totalHours} h</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #22c55e;">
+                <span>Odhadovaná mzda:</span>
+                <strong>${totalGross} Kč</strong>
+            </div>
+        `;
 }
 //
 
@@ -187,6 +228,7 @@ shiftForm.addEventListener('submit', async (event) => {
         }
         await saveJobs(jobs);
         renderShiftList(targetJob);
+        await updateMonthView()
         document.getElementById('shift-modal').close();
         shiftForm.reset();
         editingShiftId = null;
@@ -217,6 +259,27 @@ deleteJobBtn.addEventListener('click', async () => {
     renderJobs(jobs);
     console.log("Práce byla úspěšně smazána");
 });
+prevMonthBtn.addEventListener('click', async () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
+    await updateMonthView();
+});
+nextMonthBtn.addEventListener('click', async () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    await updateMonthView();
+});
+/////
+
+/////
+
+/////
 async function initApp() {
     const jobs = await loadJobs();
     renderJobs(jobs);
