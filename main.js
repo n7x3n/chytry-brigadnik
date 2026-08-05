@@ -125,6 +125,7 @@ async function updateMonthView() {
     if (!activeJob) return;
     document.getElementById('current-month-display').innerText = `${MONTH_NAMES[currentMonth]} ${currentYear}`;
     renderSummaryTable(activeJob);
+    renderCalendar(activeJob);
 }
 function renderSummaryTable(job) {
     const container = document.getElementById('detail-summary-table');
@@ -146,6 +147,22 @@ function renderSummaryTable(job) {
             </div>
         `;
 }
+function renderCalendar(job) {
+        const grid = document.getElementById('calendar-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayStr = String(day).padStart(2, '0');
+            const monthStr = String(currentMonth + 1).padStart(2, '0');
+            const targetDate = `${currentYear}-${monthStr}-${dayStr}`;
+            const hasShift = job.shifts && job.shifts.some(shift => shift.shiftDate === targetDate);
+            const box = document.createElement('div');
+            box.className = 'calendar-day-box' + (hasShift ? ' worked' : '');
+            box.innerText = day;
+            grid.appendChild(box);
+        }
+    }
 //
 
 addBtn.addEventListener('click', () => {
