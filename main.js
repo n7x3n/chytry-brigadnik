@@ -11,6 +11,7 @@ const shiftList = document.getElementById('show-shift-list');
 const cnlShiftList = document.getElementById('back-to-overview-btn');
 let currentJobId = null;
 let editingShiftId = null;
+const deleteJobBtn = document.getElementById('delete-job-btn');
 //
 
 //functions
@@ -204,6 +205,17 @@ shiftList.addEventListener('click', async () => {
 cnlShiftList.addEventListener('click', () => {
     document.getElementById('shift-list').style.display = 'none';
     document.getElementById('detail-overview').style.display = 'block';
+});
+deleteJobBtn.addEventListener('click', async () => {
+    if (!currentJobId) return;
+    const confirmDelete = confirm("Opravdu chcete smazat tuto práci včetně všech směn?");
+    if (!confirmDelete) return;
+    let jobs = await loadJobs();
+    jobs = jobs.filter(j => j.id !== currentJobId);
+    await saveJobs(jobs);
+    document.getElementById('detail-modal').close();
+    renderJobs(jobs);
+    console.log("Práce byla úspěšně smazána");
 });
 async function initApp() {
     const jobs = await loadJobs();
