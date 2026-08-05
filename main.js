@@ -148,21 +148,21 @@ function renderSummaryTable(job) {
         `;
 }
 function renderCalendar(job) {
-        const grid = document.getElementById('calendar-grid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayStr = String(day).padStart(2, '0');
-            const monthStr = String(currentMonth + 1).padStart(2, '0');
-            const targetDate = `${currentYear}-${monthStr}-${dayStr}`;
-            const hasShift = job.shifts && job.shifts.some(shift => shift.shiftDate === targetDate);
-            const box = document.createElement('div');
-            box.className = 'calendar-day-box' + (hasShift ? ' worked' : '');
-            box.innerText = day;
-            grid.appendChild(box);
-        }
+    const grid = document.getElementById('calendar-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = String(day).padStart(2, '0');
+        const monthStr = String(currentMonth + 1).padStart(2, '0');
+        const targetDate = `${currentYear}-${monthStr}-${dayStr}`;
+        const hasShift = job.shifts && job.shifts.some(shift => shift.shiftDate === targetDate);
+        const box = document.createElement('div');
+        box.className = 'calendar-day-box' + (hasShift ? ' worked' : '');
+        box.innerText = day;
+        grid.appendChild(box);
     }
+}
 //
 
 addBtn.addEventListener('click', () => {
@@ -206,6 +206,10 @@ jobForm.addEventListener('submit', async (event) => {
 addShiftBtn.addEventListener('click', () => {
     editingShiftId = null;
     shiftForm.reset();
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById('shift-date').value = todayStr;
+    document.getElementById('clock-in-input').value = "08:00";
+    document.getElementById('clock-out-input').value = "16:00";
     document.getElementById('shift-modal').showModal();
 })
 
