@@ -17,7 +17,10 @@
     </header>
     <dialog id="job-modal">
         <form id="job-form">
-            <h3>Nová práce / brigáda</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Nová práce / brigáda</h3>
+                <button type="button" id="cancel-btn" class="close-red-btn">✕</button>
+            </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
             <input type="number" id="job-rate" placeholder="Hodinová mzda (Kč)" required>
             <div>

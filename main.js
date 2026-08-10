@@ -1,5 +1,12 @@
 import { wageCalculator, shiftHours } from './calc_engine.js';
 import { saveJobs, loadJobs } from './storage.js';
+import { StatusBar, Style } from '@capacitor/status-bar'
+try {
+    StatusBar.setStyle({ style: Style.Dark });
+    StatusBar.setBackgroundColor({ color: '#18181b' });
+} catch (e) {
+    // V prohlížeči tuto chybu ignorujeme
+}
 //mapping variables
 const addBtn = document.getElementById('add-btn');
 const cnlBtn = document.getElementById('cancel-btn');
@@ -170,7 +177,12 @@ addBtn.addEventListener('click', () => {
 })
 
 cnlBtn.addEventListener('click', () => {
-    document.getElementById('job-modal').close();
+    const jobModal = document.getElementById('job-modal');
+    jobModal.classList.add('closing');
+    setTimeout(() => {
+        jobModal.close();
+        jobModal.classList.remove('closing');
+    }, 250);
 })
 
 jobForm.addEventListener('submit', async (event) => {
