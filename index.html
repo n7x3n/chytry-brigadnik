@@ -11,9 +11,23 @@
 <body>
 
     <header>
-        <button id="settings-btn">Nast.</button>
+        <button id="settings-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-settings-icon lucide-settings">
+                <path
+                    d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+        </button>
         <h1 class="header-text">Chytrý Brigádník</h1>
-        <button id="add-btn">vyt</button>
+        <button id="add-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
     </header>
     <dialog id="job-modal">
         <form id="job-form">
@@ -41,8 +55,8 @@
             </div>
             <input type="number" id="kids-count" placeholder="Počet dětí">
             <hr>
-            <button type="submit">Uložit</button>
-            <button type="button" id="cancel-btn">Zrušit</button>
+            <button type="submit" class="reg-button">Uložit</button>
+            <button type="button" id="cancel-btn" class="reg-button">Zrušit</button>
         </form>
     </dialog>
     <dialog id="detail-modal">
@@ -50,7 +64,14 @@
         <div id="detail-overview">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 id="detail-title">Název práce</h2>
-                <button type="button" id="close-detail-btn">✕</button>
+                <button type="button" id="close-detail-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </button>
             </div>
             <hr>
             <div id="detail-content">
@@ -58,17 +79,32 @@
             </div>
             <div id="month-selector"
                 style="display: flex; justify-content: space-between; align-items:center; margin: 10px 0;">
-                <button type="button" id="prev-month-btn">&lt;</button>
+                <button type="button" id="prev-month-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-arrow-left-icon lucide-arrow-left">
+                        <path d="m12 19-7-7 7-7" />
+                        <path d="M19 12H5" />
+                    </svg>
+                </button>
                 <h3 id="current-month-display"></h3>
-                <button type="button" id="next-month-btn">&gt;</button>
+                <button type="button" id="next-month-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-arrow-right-icon lucide-arrow-right">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                    </svg>
+                </button>
             </div>
             <div id="calendar-grid"></div>
             <hr>
-            <button type="button" id="add-shift-btn" style="width: 100%; margin-top: 10px;">+ Přidat
-                směnu</button>
-            <button type="button" id="show-shift-list"
-                style="width: 100%; margin-top: 10px; margin-bottom: 10px;">Zobrazit seznam
-                směn</button>
+            <div style="margin-top: 10px; margin-bottom: 10px;">
+                <button type="button" id="add-shift-btn" class="reg-button">+ Přidat
+                    směnu</button>
+                <button type="button" id="show-shift-list" class="reg-button" style="margin-top: 10px;">Zobrazit seznam
+                    směn</button>
+            </div>
             <hr style="margin-bottom: 10px;">
             <div id="detail-summary-table">
             </div>
