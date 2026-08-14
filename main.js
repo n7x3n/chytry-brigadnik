@@ -115,6 +115,22 @@ function renderShiftList(job) {
         container.appendChild(card);
     });
 }
+function confDelModal(confString) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+        modal.showModal();
+        okBtn.onclick = () => {
+            modal.close();
+            resolve(true);
+        };
+        cancelBtn.onclick = () => {
+            modal.close();
+            resolve(false);
+        };
+    });
+}
 async function deleteShift(shiftId) {
     let jobs = await loadJobs();
     const targetJob = jobs.find(j => j.id === currentJobId);
@@ -283,7 +299,7 @@ cnlShiftList.addEventListener('click', () => {
 });
 deleteJobBtn.addEventListener('click', async () => {
     if (!currentJobId) return;
-    const confirmDelete = confirm("Opravdu chcete smazat tuto práci včetně všech směn?");
+    const confirmDelete = await confDelModal();
     if (!confirmDelete) return;
     let jobs = await loadJobs();
     jobs = jobs.filter(j => j.id !== currentJobId);

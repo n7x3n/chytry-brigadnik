@@ -37,26 +37,25 @@
             </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
             <input type="number" id="job-rate" placeholder="Hodinová mzda (Kč)" required>
-            <div>
-                <label for="tax-payer">Daňový poplatník</label>
+            <label class="checkbox-row" for="tax-payer">
+                <span>Daňový poplatník</span>
                 <input type="checkbox" id="tax-payer">
-            </div>
-            <div>
-                <label for="inv-1-2">Invalidita 1. a 2. stupně</label>
+            </label>
+            <label class="checkbox-row" for="inv-1-2">
+                <span>Invalidita 1. a 2. stupně</span>
                 <input type="checkbox" id="inv-1-2">
-            </div>
-            <div>
-                <label for="inv-3">Invalidita 3. stupně</label>
+            </label>
+            <label class="checkbox-row" for="inv-3">
+                <span>Invalidita 3. stupně</span>
                 <input type="checkbox" id="inv-3">
-            </div>
-            <div>
-                <label for="ztp">ZTP/P</label>
+            </label>
+            <label class="checkbox-row" for="ztp">
+                <span>ZTP/P</span>
                 <input type="checkbox" id="ztp">
-            </div>
+            </label>
             <input type="number" id="kids-count" placeholder="Počet dětí">
             <hr>
             <button type="submit" class="reg-button">Uložit</button>
-            <button type="button" id="cancel-btn" class="reg-button">Zrušit</button>
         </form>
     </dialog>
     <dialog id="detail-modal">
@@ -110,14 +109,20 @@
             </div>
             <hr>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button type="button" id="delete-job-btn" style="background-color: #ef4444; color: white;">Smazat
-                    práci</button>
+                <button type="button" id="delete-job-btn">Smazat práci</button>
             </div>
         </div>
         <div id="shift-list" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3>Seznam směn</h3>
-                <button type="button" id="back-to-overview-btn">Zpět</button>
+                <button type="button" id="back-to-overview-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-x-icon lucide-x">
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
+                    </svg>
+                </button>
             </div>
             <div id="shift-list-container"></div>
         </div>
@@ -125,28 +130,51 @@
     <dialog id="shift-modal">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 id="shift-modal-title">Přidat Směnu</h3>
-            <button type="button" id="close-shift-btn">✕</button>
+            <button type="button" id="close-shift-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-x-icon lucide-x">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </button>
         </div>
         <hr style="margin-bottom: 15px;">
         <form id="shift-form">
-            <div>
+            <div class="form-group">
                 <label for="shift-date">Datum</label>
                 <input type="date" id="shift-date" required>
             </div>
-            <div>
-                <label for="clock-in-input">Začátek</label>
-                <input type="time" name="" id="clock-in-input" required>
+            <div style="display: flex; gap: 12px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="clock-in-input">Začátek</label>
+                    <input type="time" id="clock-in-input" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="clock-out-input">Konec</label>
+                    <input type="time" id="clock-out-input" required>
+                </div>
             </div>
-            <div>
-                <label for="clock-out-input">Konec</label>
-                <input type="time" name="" id="clock-out-input" required>
-            </div>
-            <div>
+            <div class="form-group">
                 <label for="shift-note">Poznámka</label>
-                <input type="text" id="shift-note" placeholder="(netřeba vyplnit)">
-                <button type="submit" style="margin-top: 15px; width: 100%; border-radius: 8px;">Uložit směnu</button>
+                <input type="text" id="shift-note" placeholder="(volitelné)">
             </div>
+            <button type="submit" class="reg-button">Uložit směnu</button>
         </form>
+    </dialog>
+    <dialog id="confirm-modal">
+        <div style="text-align: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">⚠️</div>
+            <h3 id="confirm-modal-title" style="margin-bottom: 8px;">Potvrdit akci</h3>
+            <p id="confirm-modal-text" style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 22px;">
+                Opravdu si přejete tuto položku smazat? Tato akce je nevratná.
+            </p>
+            <div style="display: flex; gap: 12px;">
+                <button type="button" id="confirm-cancel-btn" class="reg-button" style="flex: 1;">Zrušit</button>
+                <button type="button" id="confirm-ok-btn" class="reg-button"
+                    style="flex: 1; background-color: #ef4444; border-color: #ef4444; color: white;">Smazat</button>
+            </div>
+        </div>
     </dialog>
     <main>
         <div id="dashboard">

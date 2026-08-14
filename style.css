@@ -330,3 +330,99 @@ textarea {
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
+
+#back-to-overview-btn {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ef4444;
+    color: #f4f4f5;
+}
+
+.checkbox-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #27272a;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid #3f3f46;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease;
+}
+
+.checkbox-row:active {
+    background-color: #3f3f46;
+}
+
+.checkbox-row span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #f4f4f5;
+}
+
+.checkbox-row input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: #22c55e;
+    cursor: pointer;
+}
+
+#cancel-btn {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ef4444;
+    color: #f4f4f5;
+}
+
+#close-shift-btn {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ef4444;
+    color: #f4f4f5;
+}
+
+#shift-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #a1a1aa;
+}
+
+#shift-form input[type="date"],
+#shift-form input[type="time"],
+#shift-form input[type="text"] {
+    width: 100%;
+    height: 52px;
+    background-color: #27272a;
+    border: 1px solid #3f3f46;
+    border-radius: 12px;
+    padding: 0 16px;
+    color: #f4f4f5;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+#shift-form input[type="date"]::-webkit-calendar-picker-indicator,
+#shift-form input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
