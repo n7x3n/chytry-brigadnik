@@ -36,6 +36,7 @@ const openDataSettingsBtn = document.getElementById('open-data-settings-btn');
 const backToSettingsBtn = document.getElementById('back-to-settings-btn');
 const settingsMainView = document.getElementById('settings-main-view');
 const settingsDataView = document.getElementById('settings-data-view');
+const exportJsonBtn = document.getElementById('export-json-btn');
 //
 
 //functions
@@ -351,6 +352,19 @@ openDataSettingsBtn.addEventListener('click', () => {
 backToSettingsBtn.addEventListener('click', () => {
     settingsDataView.style.display = 'none';
     settingsMainView.style.display = 'block';
+});
+exportJsonBtn.addEventListener('click', async () => {
+    const content = await loadJobs();
+    const data = JSON.stringify(content);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `chytry-brigadnik-export-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 });
 /////
 
