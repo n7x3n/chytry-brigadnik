@@ -502,3 +502,19 @@ dialog#settings-modal.closing {
     background-color: #ef4444;
     color: #f4f4f5;
 }
+
+.slide-in-subview {
+    animation: subviewIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes subviewIn {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

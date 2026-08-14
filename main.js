@@ -32,6 +32,10 @@ const prevMonthBtn = document.getElementById('prev-month-btn');
 const nextMonthBtn = document.getElementById('next-month-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const closeSettingsBtn = document.getElementById('close-settings-btn');
+const openDataSettingsBtn = document.getElementById('open-data-settings-btn');
+const backToSettingsBtn = document.getElementById('back-to-settings-btn');
+const settingsMainView = document.getElementById('settings-main-view');
+const settingsDataView = document.getElementById('settings-data-view');
 //
 
 //functions
@@ -337,6 +341,16 @@ closeSettingsBtn.addEventListener('click', () => {
         settingsModal.close();
         settingsModal.classList.remove('closing');
     }, 250);
+});
+openDataSettingsBtn.addEventListener('click', () => {
+    settingsMainView.style.display = 'none';
+    settingsDataView.style.display = 'block';
+    settingsDataView.classList.add('slide-in-subview');
+});
+
+backToSettingsBtn.addEventListener('click', () => {
+    settingsDataView.style.display = 'none';
+    settingsMainView.style.display = 'block';
 });
 /////
 
