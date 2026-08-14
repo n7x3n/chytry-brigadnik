@@ -58,6 +58,21 @@
             <button type="submit" class="reg-button">Uložit</button>
         </form>
     </dialog>
+    <dialog id="settings-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2>Nastavení</h2>
+            <button type="button" id="close-settings-btn" class="close-red-btn">✕</button>
+        </div>
+        <div class="settings-list">
+            <div class="settings-item" id="export-data-btn">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <span class="settings-icon">💾</span>
+                    <span style="font-weight: 500; font-size: 1rem;">Exportovat data (JSON)</span>
+                </div>
+                <span style="color: #71717a; font-size: 1.2rem;">&rsaquo;</span>
+            </div>
+        </div>
+    </dialog>
     <dialog id="detail-modal">
         <div class="sheet-handle"></div>
         <div id="detail-overview">

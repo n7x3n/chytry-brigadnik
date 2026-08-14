@@ -30,6 +30,8 @@ const MONTH_NAMES = [
 ];
 const prevMonthBtn = document.getElementById('prev-month-btn');
 const nextMonthBtn = document.getElementById('next-month-btn');
+const settingsBtn = document.getElementById('settings-btn');
+const closeSettingsBtn = document.getElementById('close-settings-btn');
 //
 
 //functions
@@ -323,6 +325,18 @@ nextMonthBtn.addEventListener('click', async () => {
         currentYear++;
     }
     await updateMonthView();
+});
+settingsBtn.addEventListener('click', () => {
+    document.getElementById('settings-modal').showModal();
+});
+
+closeSettingsBtn.addEventListener('click', () => {
+    const settingsModal = document.getElementById('settings-modal');
+    settingsModal.classList.add('closing');
+    setTimeout(() => {
+        settingsModal.close();
+        settingsModal.classList.remove('closing');
+    }, 250);
 });
 /////
 
