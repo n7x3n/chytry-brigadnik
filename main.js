@@ -16,6 +16,8 @@ const cnlShiftBtn = document.getElementById('close-shift-btn');
 const shiftForm = document.getElementById('shift-form');
 const shiftList = document.getElementById('show-shift-list');
 const cnlShiftList = document.getElementById('back-to-overview-btn');
+const importJsonBtn = document.getElementById('import-json-btn');
+const importFileInput = document.getElementById('import-file-input');
 let currentJobId = null;
 let editingShiftId = null;
 const deleteJobBtn = document.getElementById('delete-job-btn');
@@ -193,6 +195,18 @@ function renderCalendar(job) {
         grid.appendChild(box);
     }
 }
+function showAlert(title, message) {
+    const modal = document.getElementById('alert-modal');
+    const modalTitle = document.getElementById('alert-modal-title');
+    const text = document.getElementById('alert-modal-text');
+    const btn = document.getElementById('alert-modal-btn');
+    if (modalTitle) modalTitle.innerText = title;
+    if (text) text.innerText = message;
+    modal.showModal();
+    btn.onclick = () => {
+        modal.close();
+    };
+}
 //
 
 addBtn.addEventListener('click', () => {
@@ -366,8 +380,94 @@ exportJsonBtn.addEventListener('click', async () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 });
+importJsonBtn.addEventListener('click', () => {
+    importFileInput.click();
+});
+importFileInput.addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+
+        const text = await file.text();
+        const importedJobs = JSON.parse(text);
+        if (!Array.isArray(importedJobs)) {
+            throw new Error("Data nejsou v platném formátu pole.");
+        }
+        for (const job of importedJobs) {
+            if (!job.id || !job.config || !Array.isArray(job.shifts)) {
+                throw new Error("Neplatná struktura dat v souboru.");
+            }
+        }
+        let currentJobs = await loadJobs();
+        importedJobs.forEach(impJob => {
+            const existingJob = currentJobs.find(j => j.id === impJob.id);
+            if (existingJob) {
+                impJob.shifts.forEach(impShift => {
+                    const shiftExists = existingJob.shifts.some(s => s.id === impShift.id);
+                    if (!shiftExists) {
+                        existingJob.shifts.push(impShift);
+                    }
+                });
+            } else {
+                currentJobs.push(impJob);
+            }
+        });
+        await saveJobs(currentJobs);
+        renderJobs(currentJobs);
+        showAlert("Úspěch!", "Data byla úspěšně importována a sloučena se stávajícími.");
+    } catch (err) {
+        console.error("Chyba při importu:", err);
+        showAlert("Chyba importu", "Vybraný soubor není platná záloha aplikace Chytrý Brigádník!");
+    } finally {
+        importFileInput.value = "";
+        document.getElementById('settings-modal').close();
+    }
+});
 /////
 
+// swipe-to-dismiss on detail-modal
+const detailModal = document.getElementById('detail-modal');
+let startY = 0;
+let currentY = 0;
+let isDragging = false;
+
+detailModal.addEventListener('touchstart', (e) => {
+    if (detailModal.scrollTop === 0) {
+        startY = e.touches[0].clientY;
+        currentY = startY;
+        isDragging = true;
+        detailModal.style.transition = 'none';
+    }
+}, { passive: true });
+detailModal.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    currentY = e.touches[0].clientY;
+    const deltaY = currentY - startY;
+    if (deltaY > 0) {
+        detailModal.style.transform = `translateY(${deltaY}px)`;
+    }
+}, { passive: true });
+detailModal.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    const deltaY = currentY - startY;
+    if (deltaY > 120) {
+        detailModal.style.transition = 'transform 0.12s ease-out';
+        detailModal.style.transform = 'translateY(100%)';
+        setTimeout(() => {
+            detailModal.close();
+            detailModal.style.transform = '';
+            detailModal.style.transition = '';
+        }, 120);
+    } else {
+        detailModal.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
+        detailModal.style.transform = 'translateY(0)';
+        setTimeout(() => {
+            detailModal.style.transition = '';
+        }, 200);
+    }
+});
 /////
 
 /////
