@@ -378,22 +378,19 @@ exportJsonBtn.addEventListener('click', async () => {
         const content = await loadJobs();
         const data = JSON.stringify(content, null, 2);
         const fileName = `chytry-brigadnik-export-${new Date().toISOString().split('T')[0]}.json`;
-        const result = await Filesystem.writeFile({
+
+        await Filesystem.writeFile({
             path: fileName,
             data: data,
-            directory: Directory.Cache,
+            directory: Directory.Documents,
             encoding: Encoding.UTF8
         });
-        await Share.share({
-            title: 'Záloha Chytrý Brigádník',
-            text: 'Záložní soubor s pracemi a směnami',
-            url: result.uri,
-            dialogTitle: 'Uložit nebo sdílet zálohu'
-        });
-        console.log("Export úspěšně otevřen přes Share!");
+
+        console.log("Soubor byl přímo uložen do složky Dokumenty.");
+        showAlert("Záloha uložena!", `Soubor ${fileName} byl úspěšně uložen do složky Dokumenty ve vašem telefonu.`);
     } catch (err) {
         console.error("Chyba při exportu:", err);
-        showAlert("Chyba exportu", "Nepodařilo se vygenerovat soubor pro sdílení.");
+        showAlert("Chyba exportu", "Nepodařilo se uložit soubor do úložiště.");
     }
 });
 importJsonBtn.addEventListener('click', () => {
@@ -475,6 +472,10 @@ detailModal.addEventListener('touchend', () => {
             detailModal.close();
             detailModal.style.transform = '';
             detailModal.style.transition = '';
+            const shiftList = document.getElementById('shift-list');
+            const detailOverview = document.getElementById('detail-overview');
+            if (shiftList) shiftList.style.display = 'none';
+            if (detailOverview) detailOverview.style.display = 'block';
         }, 120);
     } else {
         detailModal.style.transition = 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
