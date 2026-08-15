@@ -1,6 +1,7 @@
 import { wageCalculator, shiftHours } from './calc_engine.js';
 import { saveJobs, loadJobs } from './storage.js';
 import { StatusBar, Style } from '@capacitor/status-bar'
+import { App } from '@capacitor/app';
 try {
     StatusBar.setStyle({ style: Style.Dark });
     StatusBar.setBackgroundColor({ color: '#18181b' });
@@ -471,6 +472,32 @@ detailModal.addEventListener('touchend', () => {
 /////
 
 /////
+try {
+    App.addListener('backButton', () => {
+        const settingsDataView = document.getElementById('settings-data-view');
+        const settingsMainView = document.getElementById('settings-main-view');
+        if (settingsDataView && settingsDataView.style.display === 'block') {
+            settingsDataView.style.display = 'none';
+            settingsMainView.style.display = 'block';
+            return;
+        }
+        const shiftList = document.getElementById('shift-list');
+        const detailOverview = document.getElementById('detail-overview');
+        if (shiftList && shiftList.style.display === 'block') {
+            shiftList.style.display = 'none';
+            detailOverview.style.display = 'block';
+            return;
+        }
+        const openModals = Array.from(document.querySelectorAll('dialog[open]'));
+        if (openModals.length > 0) {
+            const topModal = openModals[openModals.length - 1];
+            topModal.close();
+        } else {
+            App.exitApp();
+        }
+    });
+} catch (e) {
+}
 async function initApp() {
     const jobs = await loadJobs();
     renderJobs(jobs);
