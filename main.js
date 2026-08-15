@@ -125,22 +125,25 @@ function renderShiftList(job) {
         container.appendChild(card);
     });
 }
-function confDelModal(confString) {
+function confDelModal(confString, okText = "Smazat") {
     return new Promise((resolve) => {
         const modal = document.getElementById('confirm-modal');
+        const text = document.getElementById('confirm-modal-text');
         const okBtn = document.getElementById('confirm-ok-btn');
         const cancelBtn = document.getElementById('confirm-cancel-btn');
-        modal.showModal();
-        okBtn.onclick = () => {
-            modal.close();
-            resolve(true);
-        };
-        cancelBtn.onclick = () => {
-            modal.close();
-            resolve(false);
-        };
-    });
-}
+        if (text) text.innerText = confString || "Opravdu si přejete tuto položku smazat?";
+        if (okBtn) okBtn.innerText = okText;
+    modal.showModal();
+    okBtn.onclick = () => {
+        modal.close();
+        resolve(true);
+    };
+    cancelBtn.onclick = () => {
+        modal.close();
+        resolve(false);
+    };
+});
+    }
 async function deleteShift(shiftId) {
     let jobs = await loadJobs();
     const targetJob = jobs.find(j => j.id === currentJobId);
@@ -498,8 +501,31 @@ try {
     });
 } catch (e) {
 }
+
+/////
+
+const CURRENT_VERSION = "1.1.0";
+
+async function checkForAppUpdates() {
+    try {
+        const response = await fetch('https://raw.githubusercontent.com/n7x3n/chytry-brigadnik/main/version.json');
+        if (!response.ok) return;
+        const remoteData = await response.json();
+        const remoteVersion = remoteData.version;
+        if (remoteVersion && remoteVersion !== CURRENT_VERSION) {
+            const wantsUpdate = await confDelModal(
+                `🎉 Je k dispozici nová verze (v${remoteVersion})!\nPřejete si otevřít stránku ke stažení nového APK?`, "otevřít");
+            if (wantsUpdate) {
+                window.open(remoteData.downloadUrl || 'https://github.com/n7x3n/chytry-brigadnik / releases', '_blank');
+            }
+        }
+    } catch (e) {
+        console.log("Kontrola aktualizací přeskočena (offline režim).");
+    }
+}
 async function initApp() {
     const jobs = await loadJobs();
     renderJobs(jobs);
+    checkForAppUpdates();
 }
 initApp();
