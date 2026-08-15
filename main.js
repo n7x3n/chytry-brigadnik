@@ -2,6 +2,8 @@ import { wageCalculator, shiftHours } from './calc_engine.js';
 import { saveJobs, loadJobs } from './storage.js';
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { App } from '@capacitor/app';
+import { Share } from '@capacitor/share';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 try {
     StatusBar.setStyle({ style: Style.Dark });
     StatusBar.setBackgroundColor({ color: '#18181b' });
@@ -133,17 +135,17 @@ function confDelModal(confString, okText = "Smazat") {
         const cancelBtn = document.getElementById('confirm-cancel-btn');
         if (text) text.innerText = confString || "Opravdu si přejete tuto položku smazat?";
         if (okBtn) okBtn.innerText = okText;
-    modal.showModal();
-    okBtn.onclick = () => {
-        modal.close();
-        resolve(true);
-    };
-    cancelBtn.onclick = () => {
-        modal.close();
-        resolve(false);
-    };
-});
-    }
+        modal.showModal();
+        okBtn.onclick = () => {
+            modal.close();
+            resolve(true);
+        };
+        cancelBtn.onclick = () => {
+            modal.close();
+            resolve(false);
+        };
+    });
+}
 async function deleteShift(shiftId) {
     let jobs = await loadJobs();
     const targetJob = jobs.find(j => j.id === currentJobId);
@@ -372,17 +374,27 @@ backToSettingsBtn.addEventListener('click', () => {
     settingsMainView.style.display = 'block';
 });
 exportJsonBtn.addEventListener('click', async () => {
-    const content = await loadJobs();
-    const data = JSON.stringify(content);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `chytry-brigadnik-export-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+        const content = await loadJobs();
+        const data = JSON.stringify(content, null, 2);
+        const fileName = `chytry-brigadnik-export-${new Date().toISOString().split('T')[0]}.json`;
+        const result = await Filesystem.writeFile({
+            path: fileName,
+            data: data,
+            directory: Directory.Cache,
+            encoding: Encoding.UTF8
+        });
+        await Share.share({
+            title: 'Záloha Chytrý Brigádník',
+            text: 'Záložní soubor s pracemi a směnami',
+            url: result.uri,
+            dialogTitle: 'Uložit nebo sdílet zálohu'
+        });
+        console.log("Export úspěšně otevřen přes Share!");
+    } catch (err) {
+        console.error("Chyba při exportu:", err);
+        showAlert("Chyba exportu", "Nepodařilo se vygenerovat soubor pro sdílení.");
+    }
 });
 importJsonBtn.addEventListener('click', () => {
     importFileInput.click();

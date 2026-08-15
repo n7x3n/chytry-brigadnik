@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Dark Background -->
+  <rect width="1024" height="1024" fill="#18181b"/>
+  
+  <!-- Centered Lucide Calendar-Check-2 Icon in White -->
+  <g transform="translate(212, 212) scale(25)" fill="none" stroke="#f4f4f5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 19 3 L 5 3"/>
+    <path d="M 21 13 L 21 5"/>
+    <path d="M 21 5 A2 2 0 0 0 19 3"/>
+    <path d="M 3 19 A2 2 0 0 0 5 21"/>
+    <path d="M 3 5 L 3 19"/>
+    <path d="M 5 3 A2 2 0 0 0 3 5"/>
+    <path d="m16 19 2 2 4-4" stroke="#22c55e" stroke-width="2.2"/>
+    <path d="M16 2v3"/>
+    <path d="M3 9h18"/>
+    <path d="M5 21 L12.5 21"/>
+    <path d="M8 2v3"/>
+  </g>
+</svg>

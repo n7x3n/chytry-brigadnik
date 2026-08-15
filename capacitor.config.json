@@ -1,5 +1,11 @@
 {
   "appId": "cz.chytrybrigadnik.app",
   "appName": "Chytrý Brigádník",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#18181b"
+    }
+  }
 }
