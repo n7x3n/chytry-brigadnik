@@ -205,16 +205,16 @@
         <form id="shift-form">
             <div class="form-group">
                 <label for="shift-date">Datum</label>
-                <input type="date" id="shift-date" required>
+                <input type="text" id="shift-date" required readonly>
             </div>
             <div style="display: flex; gap: 12px;">
                 <div class="form-group" style="flex: 1;">
                     <label for="clock-in-input">Začátek</label>
-                    <input type="time" id="clock-in-input" required>
+                    <input type="text" id="clock-in-input" placeholder="08:00" inputmode="numeric" maxlength="5" required >
                 </div>
                 <div class="form-group" style="flex: 1;">
                     <label for="clock-out-input">Konec</label>
-                    <input type="time" id="clock-out-input" required>
+                    <input type="text" id="clock-out-input" placeholder="16:00" inputmode="numeric" maxlength="5" required >
                 </div>
             </div>
             <div class="form-group">

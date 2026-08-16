@@ -4,11 +4,14 @@ import { StatusBar, Style } from '@capacitor/status-bar'
 import { App } from '@capacitor/app';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/dark.css';
+import { Czech } from 'flatpickr/dist/l10n/cs.js';
 try {
     StatusBar.setStyle({ style: Style.Dark });
     StatusBar.setBackgroundColor({ color: '#18181b' });
 } catch (e) {
-    // V prohlížeči tuto chybu ignorujeme
 }
 //mapping variables
 const addBtn = document.getElementById('add-btn');
@@ -42,6 +45,19 @@ const backToSettingsBtn = document.getElementById('back-to-settings-btn');
 const settingsMainView = document.getElementById('settings-main-view');
 const settingsDataView = document.getElementById('settings-data-view');
 const exportJsonBtn = document.getElementById('export-json-btn');
+const shiftDatePicker = flatpickr("#shift-date", {
+    locale: Czech,
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "j. F Y",
+    defaultDate: "today",
+    disableMobile: true,
+    static: true
+});
+const clockInInput = document.getElementById('clock-in-input');
+const clockOutInput = document.getElementById('clock-out-input');
+setupTimeInput(clockInInput, "08:00");
+setupTimeInput(clockOutInput, "16:00");
 //
 
 //functions
@@ -78,7 +94,7 @@ async function openJobDetail(job) {
 }
 function editShift(shift) {
     editingShiftId = shift.id
-    document.getElementById('shift-date').value = shift.shiftDate;
+    shiftDatePicker.setDate(shift.shiftDate);
     document.getElementById('clock-in-input').value = shift.clockIn;
     document.getElementById('clock-out-input').value = shift.clockOut;
     document.getElementById('shift-note').value = shift.shiftNote;
@@ -220,6 +236,58 @@ function showAlert(title, message) {
         modal.close();
     };
 }
+function setupTimeInput(inputElement, defaultValue = "08:00") {
+    inputElement.value = defaultValue;
+    inputElement.addEventListener('focus', (e) => {
+        setTimeout(() => e.target.select(), 50);
+    });
+    inputElement.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.length > 4) val = val.slice(0, 4);
+        if (val.length === 1 && parseInt(val, 10) > 2) {
+            e.target.value = `0${val}:`;
+            return;
+        }
+        if (val.length >= 2) {
+            let hours = parseInt(val.slice(0, 2), 10);
+            if (hours > 23) hours = 23;
+            const hoursStr = String(hours).padStart(2, '0');
+            if (val.length > 2) {
+                let mins = parseInt(val.slice(2), 10);
+                if (mins > 59) mins = 59;
+                const minsStr = val.slice(2).length === 2 ? String(mins).padStart(2, '0') : val.
+                    slice(2);
+                e.target.value = `${hoursStr}:${minsStr}`;
+            } else {
+                e.target.value = `${hoursStr}:`;
+            }
+        } else {
+            e.target.value = val;
+        }
+    });
+    inputElement.addEventListener('blur', (e) => {
+        let val = e.target.value.trim();
+        if (!val) {
+            e.target.value = defaultValue;
+            return;
+        }
+        const digits = val.replace(/\D/g, '');
+        if (digits.length === 1) {
+            e.target.value = `0${digits}:00`;
+        } else if (digits.length === 2) {
+            let h = String(Math.min(23, parseInt(digits, 10) || 0)).padStart(2, '0');
+            e.target.value = `${h}:00`;
+        } else if (digits.length === 3) {
+            let h = String(Math.min(23, parseInt(digits[0], 10) || 0)).padStart(2, '0');
+            let m = String(Math.min(59, parseInt(digits.slice(1), 10) || 0)).padStart(2, '0');
+            e.target.value = `${h}:${m}`;
+        } else {
+            let h = String(Math.min(23, parseInt(digits.slice(0, 2), 10) || 0)).padStart(2, '0');
+            let m = String(Math.min(59, parseInt(digits.slice(2), 10) || 0)).padStart(2, '0');
+            e.target.value = `${h}:${m}`;
+        }
+    });
+}
 //
 
 addBtn.addEventListener('click', () => {
@@ -268,10 +336,11 @@ jobForm.addEventListener('submit', async (event) => {
 addShiftBtn.addEventListener('click', () => {
     editingShiftId = null;
     shiftForm.reset();
-    const todayStr = new Date().toISOString().split('T')[0];
-    document.getElementById('shift-date').value = todayStr;
+
+    shiftDatePicker.setDate(new Date());
     document.getElementById('clock-in-input').value = "08:00";
     document.getElementById('clock-out-input').value = "16:00";
+    document.getElementById('shift-modal-title').innerText = "Přidat Směnu";
     document.getElementById('shift-modal').showModal();
 })
 
