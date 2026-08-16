@@ -74,7 +74,6 @@ dialog {
 
 dialog::backdrop {
     background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
 }
 
 dialog#detail-modal[open] {
@@ -110,6 +109,7 @@ dialog#detail-modal[open] {
     background-color: #3f3f46;
     border-radius: 2px;
     margin: 0 auto 12px auto;
+    padding: 3px;
 }
 
 .job-card {
@@ -517,4 +517,13 @@ dialog#settings-modal.closing {
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+#job-modal::backdrop,
+#settings-modal::backdrop {
+    background: transparent;
+}
+
+.calendar-empty-box {
+    aspect-ratio: 1;
 }

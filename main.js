@@ -189,6 +189,13 @@ function renderCalendar(job) {
     const grid = document.getElementById('calendar-grid');
     if (!grid) return;
     grid.innerHTML = '';
+    const jsDay = new Date(currentYear, currentMonth, 1).getDay();
+    const firstDayIndex = (jsDay === 0) ? 6 : jsDay - 1;
+    for (let i = 0; i < firstDayIndex; i++) {
+        const emptyBox = document.createElement('div');
+        emptyBox.className = 'calendar-empty-box';
+        grid.appendChild(emptyBox);
+    }
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
         const dayStr = String(day).padStart(2, '0');
@@ -440,12 +447,13 @@ importFileInput.addEventListener('change', async (event) => {
 /////
 
 // swipe-to-dismiss on detail-modal
+const sheetHandle = document.getElementById('sheet-handle')
 const detailModal = document.getElementById('detail-modal');
 let startY = 0;
 let currentY = 0;
 let isDragging = false;
 
-detailModal.addEventListener('touchstart', (e) => {
+sheetHandle.addEventListener('touchstart', (e) => {
     if (detailModal.scrollTop === 0) {
         startY = e.touches[0].clientY;
         currentY = startY;
@@ -453,7 +461,7 @@ detailModal.addEventListener('touchstart', (e) => {
         detailModal.style.transition = 'none';
     }
 }, { passive: true });
-detailModal.addEventListener('touchmove', (e) => {
+sheetHandle.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
     currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
@@ -461,7 +469,7 @@ detailModal.addEventListener('touchmove', (e) => {
         detailModal.style.transform = `translateY(${deltaY}px)`;
     }
 }, { passive: true });
-detailModal.addEventListener('touchend', () => {
+sheetHandle.addEventListener('touchend', () => {
     if (!isDragging) return;
     isDragging = false;
     const deltaY = currentY - startY;
