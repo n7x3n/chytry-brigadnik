@@ -104,12 +104,20 @@ dialog#detail-modal[open] {
 }
 
 .sheet-handle {
-    width: 40px;
+    width: 48px;
     height: 4px;
     background-color: #3f3f46;
     border-radius: 2px;
     margin: 0 auto 12px auto;
     padding: 3px;
+}
+
+#sheet-handle-zone {
+    width: 100%;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .job-card {

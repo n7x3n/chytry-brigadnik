@@ -121,7 +121,9 @@
         </div>
     </dialog>
     <dialog id="detail-modal">
-        <div class="sheet-handle" id="sheet-handle"></div>
+        <div id="sheet-handle-zone">
+            <div class="sheet-handle" id="sheet-handle"></div>
+        </div>
         <div id="detail-overview">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 id="detail-title">Název práce</h2>
@@ -210,11 +212,13 @@
             <div style="display: flex; gap: 12px;">
                 <div class="form-group" style="flex: 1;">
                     <label for="clock-in-input">Začátek</label>
-                    <input type="text" id="clock-in-input" placeholder="08:00" inputmode="numeric" maxlength="5" required >
+                    <input type="text" id="clock-in-input" placeholder="08:00" inputmode="numeric" maxlength="5"
+                        required>
                 </div>
                 <div class="form-group" style="flex: 1;">
                     <label for="clock-out-input">Konec</label>
-                    <input type="text" id="clock-out-input" placeholder="16:00" inputmode="numeric" maxlength="5" required >
+                    <input type="text" id="clock-out-input" placeholder="16:00" inputmode="numeric" maxlength="5"
+                        required>
                 </div>
             </div>
             <div class="form-group">

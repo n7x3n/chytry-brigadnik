@@ -36,6 +36,11 @@ const MONTH_NAMES = [
     "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
     "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"
 ];
+const CZECH_DAYS = ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"];
+const CZECH_MONTHS_GENITIVE = [
+    "ledna", "února", "března", "dubna", "května", "června",
+    "července", "srpna", "září", "října", "listopadu", "prosince"
+];
 const prevMonthBtn = document.getElementById('prev-month-btn');
 const nextMonthBtn = document.getElementById('next-month-btn');
 const settingsBtn = document.getElementById('settings-btn');
@@ -103,43 +108,75 @@ function editShift(shift) {
 }
 function renderShiftList(job) {
     const container = document.getElementById('shift-list-container');
-    container.innerHTML = ``
+    container.innerHTML = '';
     if (!job.shifts || job.shifts.length === 0) {
-        container.innerHTML = `<p style="color: #71717a; text-align: center; margin-top: 20px;">
-        Zatím žádné odpracované směny.</p >`;
+        container.innerHTML = `<p style="color: #71717a; text-align: center; margin-top: 30px;">Zatím žádné odpracované směny.</p>`;
         return;
     }
-    const sortedShifts = [...job.shifts].sort((a, b) => new Date(b.shiftDate) - new Date(a.shiftDate));
+    const sortedShifts = [...job.shifts].sort((a, b) => new Date(b.shiftDate) - new Date(a.
+        shiftDate));
+    let currentGroup = '';
     sortedShifts.forEach(shift => {
+        const [y, m, d] = shift.shiftDate.split('-').map(Number);
+        const groupKey = `${y}-${m}`;
+        const shiftDateObj = new Date(y, m - 1, d);
+        if (groupKey !== currentGroup) {
+            currentGroup = groupKey;
+            const monthTitle = `${MONTH_NAMES[m - 1]} ${y}`;
+            const headerEl = document.createElement('div');
+            headerEl.style.cssText = 'margin-top: 24px; margin-bottom: 12px;';
+            headerEl.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0; font-size: 1.05rem; color: #f4f4f5; font-weight: 700;">${monthTitle}</h4>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid #27272a; margin-top: 8px; margin-bottom: 12px;">
+                `;
+            container.appendChild(headerEl);
+        }
         const hours = shiftHours(shift.clockIn, shift.clockOut);
         const pay = Math.ceil(hours * shift.jobrate);
+        const formattedDate = `${d}. ${CZECH_MONTHS_GENITIVE[m - 1]} ${y}`;
+        const dayName = CZECH_DAYS[shiftDateObj.getDay()];
         const card = document.createElement('div');
-        card.style.cssText = `background: #18181b; border: 1px solid #27272a; border-radius: 10px;
-        padding: 12px; margin - bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-        `;
+        card.style.cssText = `
+                background: #18181b;
+                border: 1px solid #27272a;
+                border-radius: 12px;
+                padding: 14px;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            `;
+        const noteHtml = (shift.shiftNote && shift.shiftNote !== "žádná poznámka")
+            ? `<div style="color: #a1a1aa; font-size: 0.85rem; margin-top: 4px;">📝 ${shift.
+                shiftNote}</div>`
+            : '';
         card.innerHTML = `
                 <div>
-                    <strong>${shift.shiftDate}</strong> <small>(${shift.clockIn} - ${shift.
-                clockOut})</small>
-                    <br>
-                    <span style="color: #22c55e; font-weight: bold;">+${pay} Kč</span> (${hours} h)
-                    <br>
-                    <small style="color: #a1a1aa;">📝 ${shift.shiftNote}</small>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <strong style="color: #f4f4f5; font-size: 0.95rem;">${formattedDate}</strong>
+                        <span style="background: #27272a; color: #a1a1aa; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 600;">${dayName}</span>
+                    </div>
+                    <div style="color: #71717a; font-size: 0.85rem;">
+                        🕒 ${shift.clockIn} – ${shift.clockOut} (${hours} h)
+                    </div>
+                    <div style="color: #22c55e; font-weight: bold; font-size: 1.05rem; margin-top: 4px;">
+                        +${pay.toLocaleString('cs-CZ')} Kč
+                    </div>
+                    ${noteHtml}
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button type="button" class="edit-shift-btn" style="background: #27272a; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
-                    ✏️
+                    <button type="button" class="edit-shift-btn" style="background: #27272a; border: 1px solid #3f3f46; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                        ✏️
                     </button>
-                    <button type="button" class="del-shift-btn" style="background: #ef4444; border: none; color: white; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
-                    🗑️
+                    <button type="button" class="del-shift-btn" style="background: #ef4444; border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                        🗑️
                     </button>
-                </div>`;
-        //editing shift button
-        const editBtn = card.querySelector('.edit-shift-btn');
-        editBtn.addEventListener('click', () => editShift(shift));
-        //deleting shift button
-        const delBtn = card.querySelector('.del-shift-btn');
-        delBtn.addEventListener('click', () => deleteShift(shift.id));
+                </div>
+            `;
+        card.querySelector('.edit-shift-btn').addEventListener('click', () => editShift(shift));
+        card.querySelector('.del-shift-btn').addEventListener('click', () => deleteShift(shift.id));
         container.appendChild(card);
     });
 }
@@ -516,13 +553,13 @@ importFileInput.addEventListener('change', async (event) => {
 /////
 
 // swipe-to-dismiss on detail-modal
-const sheetHandle = document.getElementById('sheet-handle')
+const sheetHandleZone = document.getElementById('sheet-handle-zone')
 const detailModal = document.getElementById('detail-modal');
 let startY = 0;
 let currentY = 0;
 let isDragging = false;
 
-sheetHandle.addEventListener('touchstart', (e) => {
+sheetHandleZone.addEventListener('touchstart', (e) => {
     if (detailModal.scrollTop === 0) {
         startY = e.touches[0].clientY;
         currentY = startY;
@@ -530,7 +567,7 @@ sheetHandle.addEventListener('touchstart', (e) => {
         detailModal.style.transition = 'none';
     }
 }, { passive: true });
-sheetHandle.addEventListener('touchmove', (e) => {
+sheetHandleZone.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
     currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
@@ -538,7 +575,7 @@ sheetHandle.addEventListener('touchmove', (e) => {
         detailModal.style.transform = `translateY(${deltaY}px)`;
     }
 }, { passive: true });
-sheetHandle.addEventListener('touchend', () => {
+sheetHandleZone.addEventListener('touchend', () => {
     if (!isDragging) return;
     isDragging = false;
     const deltaY = currentY - startY;
