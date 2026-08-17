@@ -171,8 +171,6 @@ dialog#job-modal[open] {
     padding: 24px;
     border-radius: 0;
     border: none;
-
-
     animation: slideFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -188,11 +186,11 @@ dialog#job-modal[open] {
 
 .close-red-btn {
     background-color: #ef4444;
-    color: #ffffff;
+    color: #f4f4f5;
     border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    border-radius: 8px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -284,23 +282,6 @@ textarea {
     background-color: #27272a;
 }
 
-#close-detail-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ef4444;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-#close-detail-btn:active {
-    background-color: #dc2626;
-}
-
 .reg-button {
     display: inline-flex;
     align-items: center;
@@ -339,15 +320,6 @@ textarea {
     -webkit-tap-highlight-color: transparent;
 }
 
-#back-to-overview-btn {
-    width: 35px;
-    height: 35px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ef4444;
-    color: #f4f4f5;
-}
-
 .checkbox-row {
     display: flex;
     justify-content: space-between;
@@ -377,24 +349,6 @@ textarea {
     height: 22px;
     accent-color: #22c55e;
     cursor: pointer;
-}
-
-#cancel-btn {
-    width: 35px;
-    height: 35px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ef4444;
-    color: #f4f4f5;
-}
-
-#close-shift-btn {
-    width: 35px;
-    height: 35px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ef4444;
-    color: #f4f4f5;
 }
 
 #shift-form {
@@ -500,15 +454,6 @@ dialog#settings-modal.closing {
 
 .settings-icon {
     font-size: 1.3rem;
-}
-
-#close-settings-btn {
-    width: 35px;
-    height: 35px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ef4444;
-    color: #f4f4f5;
 }
 
 .slide-in-subview {
