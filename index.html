@@ -32,7 +32,7 @@
     <dialog id="job-modal">
         <form id="job-form">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3>Nová práce / brigáda</h3>
+                <h3 id="job-modal-title">Nová práce / brigáda</h3>
                 <button type="button" id="cancel-btn" class="close-red-btn">✕</button>
             </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
@@ -172,7 +172,8 @@
             <div id="detail-summary-table">
             </div>
             <hr>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <div style="gap: 10px; margin-top: 10px;">
+                <button type="button" id="edit-job-btn">Upravit nastavení práce</button>
                 <button type="button" id="delete-job-btn">Smazat práci</button>
             </div>
         </div>

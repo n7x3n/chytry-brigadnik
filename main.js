@@ -63,6 +63,9 @@ const clockInInput = document.getElementById('clock-in-input');
 const clockOutInput = document.getElementById('clock-out-input');
 setupTimeInput(clockInInput, "08:00");
 setupTimeInput(clockOutInput, "16:00");
+let editingJobId = null;
+const editJobBtn = document.getElementById('edit-job-btn');
+const jobModalTitle = document.getElementById('job-modal-title');
 //
 
 //functions
@@ -328,6 +331,9 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
 //
 
 addBtn.addEventListener('click', () => {
+    editingJobId = null;
+    jobForm.reset();
+    if (jobModalTitle) jobModalTitle.innerText = "Nová práce / brigáda";
     document.getElementById('job-modal').showModal();
 })
 
@@ -349,21 +355,43 @@ jobForm.addEventListener('submit', async (event) => {
     const isInv3 = document.getElementById('inv-3').checked;
     const isZtp = document.getElementById('ztp').checked;
     const kidsCount = parseInt(document.getElementById('kids-count').value) || 0;
-    const newJob = {
-        id: Date.now(),
-        config: {
-            jobName: name,
-            jobRate: rate,
-            taxPayer: taxPayer,
-            inv12: isInv12,
-            inv3: isInv3,
-            ztp: isZtp,
-            kidsCount: kidsCount,
-        },
-        shifts: []
-    }
     let jobs = await loadJobs();
-    jobs.push(newJob);
+    if (editingJobId) {
+        const targetJob = jobs.find(j => j.id === editingJobId);
+        if (targetJob) {
+            targetJob.config = {
+                jobName: name,
+                jobRate: rate,
+                taxPayer: taxPayer,
+                inv12: isInv12,
+                inv3: isInv3,
+                ztp: isZtp,
+                kidsCount: kidsCount
+            };
+            document.getElementById('detail-title').innerText = name;
+            document.getElementById('detail-rate').innerText = `${rate} Kč/h`;
+            await updateMonthView();
+        }
+        editingJobId = null;
+    } else {
+        const newJob = {
+            id: Date.now(),
+            config: {
+                jobName: name,
+                jobRate: rate,
+                taxPayer: taxPayer,
+                inv12: isInv12,
+                inv3: isInv3,
+                ztp: isZtp,
+                kidsCount: kidsCount,
+            },
+            shifts: []
+        };
+        jobs.push(newJob);
+    }
+
+
+
     await saveJobs(jobs);
     document.getElementById('job-modal').close();
     jobForm.reset();
@@ -628,6 +656,22 @@ try {
     });
 } catch (e) {
 }
+editJobBtn.addEventListener('click', async () => {
+    if (!currentJobId) return;
+    const jobs = await loadJobs();
+    const currentJob = jobs.find(j => j.id === currentJobId);
+    if (!currentJob) return;
+    editingJobId = currentJob.id;
+    if (jobModalTitle) jobModalTitle.innerText = "Upravit práci";
+    document.getElementById('job-name').value = currentJob.config.jobName;
+    document.getElementById('job-rate').value = currentJob.config.jobRate;
+    document.getElementById('tax-payer').checked = !!currentJob.config.taxPayer;
+    document.getElementById('inv-1-2').checked = !!currentJob.config.inv12;
+    document.getElementById('inv-3').checked = !!currentJob.config.inv3;
+    document.getElementById('ztp').checked = !!currentJob.config.ztp;
+    document.getElementById('kids-count').value = currentJob.config.kidsCount || 0;
+    document.getElementById('job-modal').showModal();
+});
 
 /////
 
