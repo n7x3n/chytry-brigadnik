@@ -488,6 +488,9 @@ jobForm.addEventListener('submit', async (event) => {
             config: {
                 jobName: name,
                 jobRate: rate,
+                weekendBonus: weekendBonus,
+                nightBonus: nightBonus,
+                holidayBonus: holidayBonus,
                 taxPayer: taxPayer,
                 inv12: isInv12,
                 inv3: isInv3,
