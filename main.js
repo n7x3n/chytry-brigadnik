@@ -410,7 +410,7 @@ function renderBreakdownData(job) {
     <div style="text-align: center; font-weight: bold;"><p>Peníze</p></div>
     <div class="summaryTableStyle">
                 <span>Základní mzda:</span>
-                <strong>${basePay} h</strong>
+                <strong>${basePay} Kč</strong>
         </div>
     <div class="summaryTableStyle">
         <span>Víkendový příplatek:</span>
@@ -431,6 +431,11 @@ function renderBreakdownData(job) {
 addBtn.addEventListener('click', () => {
     editingJobId = null;
     jobForm.reset();
+
+    document.getElementById('job-weekend-bonus').value = "10";
+    document.getElementById('job-night-bonus').value = "10";
+    document.getElementById('job-holiday-bonus').value = "100";
+
     if (jobModalTitle) jobModalTitle.innerText = "Nová práce / brigáda";
     document.getElementById('job-modal').showModal();
 })
@@ -453,6 +458,9 @@ jobForm.addEventListener('submit', async (event) => {
     const isInv3 = document.getElementById('inv-3').checked;
     const isZtp = document.getElementById('ztp').checked;
     const kidsCount = parseInt(document.getElementById('kids-count').value) || 0;
+    const weekendBonus = parseFloat(document.getElementById('job-weekend-bonus').value) || 0;
+    const nightBonus = parseFloat(document.getElementById('job-night-bonus').value) || 0;
+    const holidayBonus = parseFloat(document.getElementById('job-holiday-bonus').value) || 0;
     let jobs = await loadJobs();
     if (editingJobId) {
         const targetJob = jobs.find(j => j.id === editingJobId);
@@ -460,6 +468,9 @@ jobForm.addEventListener('submit', async (event) => {
             targetJob.config = {
                 jobName: name,
                 jobRate: rate,
+                weekendBonus: weekendBonus,
+                nightBonus: nightBonus,
+                holidayBonus: holidayBonus,
                 taxPayer: taxPayer,
                 inv12: isInv12,
                 inv3: isInv3,
@@ -769,6 +780,9 @@ editJobBtn.addEventListener('click', async () => {
     document.getElementById('inv-3').checked = !!currentJob.config.inv3;
     document.getElementById('ztp').checked = !!currentJob.config.ztp;
     document.getElementById('kids-count').value = currentJob.config.kidsCount || 0;
+    document.getElementById('job-weekend-bonus').value = currentJob.config.weekendBonus ?? 10;
+    document.getElementById('job-night-bonus').value = currentJob.config.nightBonus ?? 10;
+    document.getElementById('job-holiday-bonus').value = currentJob.config.holidayBonus ?? 100;
     document.getElementById('job-modal').showModal();
 });
 opnShftBrkdwnBtn.addEventListener('click', async () => {

@@ -37,6 +37,24 @@
             </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
             <input type="number" id="job-rate" placeholder="Hodinová mzda (Kč)" required>
+            <div style="text-align: center; font-weight: bold;"><p>Hodiny</p></div>
+            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <div style="flex: 1;">
+                    <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 4px;">Víkend
+                        (%)</label>
+                    <input type="number" id="job-weekend-bonus" placeholder="např. 10" min="0" style="margin: 0;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 4px;">Noc
+                        (%)</label>
+                    <input type="number" id="job-night-bonus" placeholder="např. 10" min="0" style="margin: 0;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 4px;">Svátek
+                        (%)</label>
+                    <input type="number" id="job-holiday-bonus" placeholder="např. 100" min="0" style="margin: 0;">
+                </div>
+            </div>
             <label class="checkbox-row" for="tax-payer">
                 <span>Daňový poplatník</span>
                 <input type="checkbox" id="tax-payer">
@@ -252,7 +270,8 @@
         <button type="button" id="alert-modal-btn" class="reg-button">Rozumím</button>
     </dialog>
     <dialog id="shift-breakdown">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: #f4f4f5 solid 1px;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; border-bottom: #f4f4f5 solid 1px;">
             <h3 id="shift-modal-title">Podrobnosti</h3>
             <button type="button" id="close-brkdwn-btn" class="close-red-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
