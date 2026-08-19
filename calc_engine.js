@@ -135,3 +135,47 @@ export function shiftHours(clockIn, clockOut) {
     const duration = (endMin - startMin) / 60;
     return parseFloat(duration.toFixed(2));
 }
+////////////
+////////////
+
+
+const CZECH_HOLIDAYS = [
+    "01-01", "05-01", "05-08", "07-05", "07-06",
+    "09-28", "10-28", "11-17", "12-24", "12-25", "12-26"
+];
+
+export function shiftHoursBreakdown(shiftDate, clockIn, clockOut) {
+    const [y, m, d] = shiftDate.split('-').map(Number);
+    const [inH, inM] = clockIn.split(':').map(Number);
+    const [outH, outM] = clockOut.split(':').map(Number);
+    const start = new Date(y, m - 1, d, inH, inM);
+    let end = new Date(y, m - 1, d, outH, outM);
+    if (end <= start) {
+        end.setDate(end.getDate() + 1);
+    }
+    const totalHours = parseFloat(((end - start) / (1000 * 60 * 60)).toFixed(2));
+    let weekendHours = 0;
+    let holidayHours = 0;
+    let nightHours = 0;
+    let curr = new Date(start);
+    const stepMin = 15;
+    while (curr < end) {
+        const dayOfWeek = curr.getDay();
+        const hour = curr.getHours();
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isNight = (hour >= 22 || hour < 6);
+        const monthDay = `${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).
+            padStart(2, '0')}`;
+        const isHoliday = CZECH_HOLIDAYS.includes(monthDay);
+        if (isWeekend) weekendHours += stepMin / 60;
+        if (isNight) nightHours += stepMin / 60;
+        if (isHoliday) holidayHours += stepMin / 60;
+        curr.setMinutes(curr.getMinutes() + stepMin);
+    }
+    return {
+        totalHours,
+        weekendHours: parseFloat(weekendHours.toFixed(2)),
+        nightHours: parseFloat(nightHours.toFixed(2)),
+        holidayHours: parseFloat(holidayHours.toFixed(2))
+    };
+}

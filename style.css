@@ -567,3 +567,9 @@ span.flatpickr-weekday {
     padding: 4px 0 !important;
     font-size: 0.95rem !important;
 }
+
+.summaryTableStyle {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}

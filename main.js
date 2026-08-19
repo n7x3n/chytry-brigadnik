@@ -1,4 +1,4 @@
-import { wageCalculator, shiftHours } from './calc_engine.js';
+import { wageCalculator, shiftHoursBreakdown } from './calc_engine.js';
 import { saveJobs, loadJobs } from './storage.js';
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { App } from '@capacitor/app';
@@ -136,7 +136,8 @@ function renderShiftList(job) {
                 `;
             container.appendChild(headerEl);
         }
-        const hours = shiftHours(shift.clockIn, shift.clockOut);
+        let HoursBreakdown = shiftHoursBreakdown(shift.shiftDate, shift.clockIn, shift.clockOut)
+        const hours = HoursBreakdown.totalHours
         const pay = Math.ceil(hours * shift.jobrate);
         const formattedDate = `${d}. ${CZECH_MONTHS_GENITIVE[m - 1]} ${y}`;
         const dayName = CZECH_DAYS[shiftDateObj.getDay()];
@@ -228,10 +229,34 @@ function renderSummaryTable(job) {
         const [y, m, d] = shift.shiftDate.split('-').map(Number);
         return y === currentYear && (m - 1) === currentMonth;
     });
-    const totalHours = monthlyShifts.reduce((sum, shift) => sum + shift.hours, 0);
-    const totalGross = Math.ceil(totalHours * job.config.jobRate);
+    let totalHours = 0;
+    let totalWeekendHours = 0;
+    let totalNightHours = 0;
+    let totalHolidayHours = 0;
+    monthlyShifts.forEach(shift => {
+        const b = shiftHoursBreakdown(shift.shiftDate, shift.clockIn, shift.clockOut);
+        totalHours += b.totalHours;
+        totalWeekendHours += b.weekendHours;
+        totalNightHours += b.nightHours;
+        totalHolidayHours += b.holidayHours;
+    });
+    totalHours = parseFloat(totalHours.toFixed(2));
+    totalWeekendHours = parseFloat(totalWeekendHours.toFixed(2));
+    totalNightHours = parseFloat(totalNightHours.toFixed(2));
+    totalHolidayHours = parseFloat(totalHolidayHours.toFixed(2));
+
+    const rate = job.config.jobRate || 0;
+    const weekendBonusPct = job.config.weekendBonus || 0;
+    const nightBonusPct = job.config.nightBonus || 0;
+    const holidayBonusPct = job.config.holidayBonus || 0;
+    const basePay = Math.ceil(totalHours * rate);
+    const weekendPay = Math.ceil(totalWeekendHours * rate * (weekendBonusPct / 100));
+    const nightPay = Math.ceil(totalNightHours * rate * (nightBonusPct / 100));
+    const holidayPay = Math.ceil(totalHolidayHours * rate * (holidayBonusPct / 100));
+    const totalGross = basePay + weekendPay + nightPay + holidayPay;
+
     container.innerHTML = `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <div class="summaryTableStyle">
                 <span>Odpracované hodiny:</span>
                 <strong>${totalHours} h</strong>
             </div>
@@ -419,7 +444,8 @@ shiftForm.addEventListener('submit', async (event) => {
     const shiftDate = document.getElementById('shift-date').value;
     const clockIn = document.getElementById('clock-in-input').value;
     const clockOut = document.getElementById('clock-out-input').value;
-    const hours = shiftHours(clockIn, clockOut);
+    const breakdown = shiftHoursBreakdown(shiftDate, clockIn, clockOut);
+    const hours = breakdown.totalHours;
     const shiftNote = document.getElementById('shift-note').value || "žádná poznámka";
     if (targetJob) {
         if (editingShiftId) {
