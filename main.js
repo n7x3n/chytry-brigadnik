@@ -66,6 +66,9 @@ setupTimeInput(clockOutInput, "16:00");
 let editingJobId = null;
 const editJobBtn = document.getElementById('edit-job-btn');
 const jobModalTitle = document.getElementById('job-modal-title');
+const opnShftBrkdwnBtn = document.getElementById('open-shift-breakdown');
+const shiftBrkdwnModal = document.getElementById('shift-breakdown');
+const clsShftBrkdwnBtn = document.getElementById('close-brkdwn-btn');
 //
 
 //functions
@@ -352,6 +355,76 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
             e.target.value = `${h}:${m}`;
         }
     });
+}
+function renderBreakdownData(job) {
+    const container = document.getElementById('shift-breakdown-data');
+    const monthlyShifts = (job.shifts || []).filter(shift => {
+        const [y, m, d] = shift.shiftDate.split('-').map(Number);
+        return y === currentYear && (m - 1) === currentMonth;
+    });
+    let totalHours = 0;
+    let weekendHours = 0;
+    let nightHours = 0;
+    let holidayHours = 0;
+    monthlyShifts.forEach(shift => {
+        const b = shiftHoursBreakdown(shift.shiftDate, shift.clockIn, shift.clockOut);
+        totalHours += b.totalHours;
+        weekendHours += b.weekendHours;
+        nightHours += b.nightHours;
+        holidayHours += b.holidayHours;
+    });
+
+    totalHours = parseFloat(totalHours.toFixed(2));
+    weekendHours = parseFloat(weekendHours.toFixed(2));
+    nightHours = parseFloat(nightHours.toFixed(2));
+    holidayHours = parseFloat(holidayHours.toFixed(2));
+
+    const rate = job.config.jobRate || 0;
+    const weekendPct = job.config.weekendBonus || 0;
+    const nightPct = job.config.nightBonus || 0;
+    const holidayPct = job.config.holidayBonus || 0;
+
+    const basePay = Math.ceil(totalHours * rate);
+    const weekendPay = Math.ceil(weekendHours * rate * (weekendPct / 100));
+    const nightPay = Math.ceil(nightHours * rate * (nightPct / 100));
+    const holidayPay = Math.ceil(holidayHours * rate * (holidayPct / 100));
+    const grossWage = basePay + weekendPay + nightPay + holidayPay;
+    container.innerHTML = `
+    <div style="text-align: center; font-weight: bold;"><p>Hodiny</p></div>
+    <div class="summaryTableStyle">
+        <span>Odpracované hodiny:</span>
+        <strong>${totalHours} h</strong>
+    </div>
+    <div class="summaryTableStyle">
+        <span>Víkendové hodiny:</span>
+        <strong>${weekendHours} h</strong>
+    </div>
+    <div class="summaryTableStyle">
+        <span>Noční hodiny:</span>
+        <strong>${nightHours} h</strong>
+    </div>
+    <div class="summaryTableStyle">
+        <span>Sváteční hodiny:</span>
+        <strong>${holidayHours} h</strong>
+    </div>
+    <div style="text-align: center; font-weight: bold;"><p>Peníze</p></div>
+    <div class="summaryTableStyle">
+                <span>Základní mzda:</span>
+                <strong>${basePay} h</strong>
+        </div>
+    <div class="summaryTableStyle">
+        <span>Víkendový příplatek:</span>
+        <strong>${weekendPay} Kč</strong>
+    </div>
+    <div class="summaryTableStyle">
+        <span>Noční příplatek:</span>
+        <strong>${nightPay} Kč</strong>
+    </div>
+    <div class="summaryTableStyle">
+        <span>Sváteční příplatek:</span>
+        <strong>${holidayPay} Kč</strong>
+    </div>
+    `;
 }
 //
 
@@ -698,7 +771,15 @@ editJobBtn.addEventListener('click', async () => {
     document.getElementById('kids-count').value = currentJob.config.kidsCount || 0;
     document.getElementById('job-modal').showModal();
 });
-
+opnShftBrkdwnBtn.addEventListener('click', async () => {
+    let jobs = await loadJobs();
+    const activeJob = jobs.find(j => j.id === currentJobId);
+    renderBreakdownData(activeJob);
+    shiftBrkdwnModal.showModal();
+})
+clsShftBrkdwnBtn.addEventListener('click', () => {
+    shiftBrkdwnModal.close();
+});
 /////
 
 const CURRENT_VERSION = "1.1.0";

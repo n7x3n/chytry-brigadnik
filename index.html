@@ -171,6 +171,9 @@
             <hr style="margin-bottom: 10px;">
             <div id="detail-summary-table">
             </div>
+            <div style="margin-top: 7px; margin-bottom: 7px;">
+                <button type="button" id="open-shift-breakdown" class="reg-button">Zobrazit podrobná data</button>
+            </div>
             <hr>
             <div style="gap: 10px; margin-top: 10px;">
                 <button type="button" id="edit-job-btn">Upravit nastavení práce</button>
@@ -247,7 +250,22 @@
         <h3 id="alert-modal-title" style="margin-bottom: 8px;"></h3>
         <p id="alert-modal-text" style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 22px;"></p>
         <button type="button" id="alert-modal-btn" class="reg-button">Rozumím</button>
-        <!--Kdyžtak přidat style="width: 100%"-->
+    </dialog>
+    <dialog id="shift-breakdown">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: #f4f4f5 solid 1px;">
+            <h3 id="shift-modal-title">Podrobnosti</h3>
+            <button type="button" id="close-brkdwn-btn" class="close-red-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-x-icon lucide-x">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </button>
+        </div>
+        <div id="shift-breakdown-data">
+
+        </div>
     </dialog>
     <main>
         <div id="dashboard">
