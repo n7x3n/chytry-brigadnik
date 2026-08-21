@@ -69,7 +69,6 @@ const jobModalTitle = document.getElementById('job-modal-title');
 const opnShftBrkdwnBtn = document.getElementById('open-shift-breakdown');
 const shiftBrkdwnModal = document.getElementById('shift-breakdown');
 const clsShftBrkdwnBtn = document.getElementById('close-brkdwn-btn');
-const delCalShftBtn = document.getElementById('del-cal-shft-Btn');
 let selectedShift = null;
 //
 
@@ -112,7 +111,6 @@ function editShift(shift) {
     document.getElementById('clock-out-input').value = shift.clockOut;
     document.getElementById('shift-note').value = shift.shiftNote;
     document.getElementById('shift-modal-title').innerText = "Upravit směnu";
-    delCalShftBtn.style.display = 'block';
     document.getElementById('shift-modal').showModal();
 }
 function renderShiftList(job) {
@@ -295,7 +293,6 @@ function renderCalendar(job) {
         box.addEventListener('click', () => {
             if (existingShift) {
                 showShiftDetail(existingShift, job);
-                //editShift(existingShift);
             } else {
                 editingShiftId = null;
                 shiftForm.reset();
@@ -303,7 +300,6 @@ function renderCalendar(job) {
                 document.getElementById('clock-in-input').value = "08:00";
                 document.getElementById('clock-out-input').value = "16:00";
                 document.getElementById('shift-modal-title').innerText = "Přidat Směnu";
-                delCalShftBtn.style.display = 'none';
                 document.getElementById('shift-modal').showModal();
             }
         });
@@ -531,7 +527,6 @@ jobForm.addEventListener('submit', async (event) => {
 })
 addShiftBtn.addEventListener('click', () => {
     editingShiftId = null;
-    delCalShftBtn.style.display = 'none';
     shiftForm.reset();
 
     shiftDatePicker.setDate(new Date());
@@ -817,14 +812,6 @@ opnShftBrkdwnBtn.addEventListener('click', async () => {
 clsShftBrkdwnBtn.addEventListener('click', () => {
     shiftBrkdwnModal.close();
 });
-delCalShftBtn.addEventListener('click', async () => {
-    const confirmed = await confDelModal("Opravdu si přejete tuto směnu smazat?");
-    if (confirmed) {
-        document.getElementById('shift-modal').close();
-        await deleteShift(editingShiftId);
-
-    }
-})
 function showShiftDetail(shift, job) {
     selectedShift = shift;
 
@@ -854,13 +841,13 @@ function showShiftDetail(shift, job) {
                 <span style="background: #27272a; color: #a1a1aa; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 600;">${dayName}</span>
             </div>
             <div style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 6px;">
-                🕒 <strong>${shift.clockIn} – ${shift.clockOut}</strong> (${breakdown.totalHours} h)
+            <strong>${shift.clockIn} – ${shift.clockOut}</strong> (${breakdown.totalHours} h)
             </div>
             <div style="color: #22c55e; font-size: 1.25rem; font-weight: bold; margin-bottom: 12px;">
                 +${totalPay.toLocaleString('cs-CZ')} Kč
             </div>
             <div style="color: #a1a1aa; font-size: 0.85rem; background: #18181b; padding: 10px 12px; border-radius: 8px; border: 1px solid #27272a;">
-                📝 ${note}
+                ${note}
             </div>
         `;
 
