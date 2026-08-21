@@ -70,6 +70,7 @@ const opnShftBrkdwnBtn = document.getElementById('open-shift-breakdown');
 const shiftBrkdwnModal = document.getElementById('shift-breakdown');
 const clsShftBrkdwnBtn = document.getElementById('close-brkdwn-btn');
 const delCalShftBtn = document.getElementById('del-cal-shft-Btn');
+let selectedShift = null;
 //
 
 //functions
@@ -293,7 +294,8 @@ function renderCalendar(job) {
         box.className = 'calendar-day-box' + (hasShift ? ' worked' : '');
         box.addEventListener('click', () => {
             if (existingShift) {
-                editShift(existingShift);
+                showShiftDetail(existingShift, job);
+                //editShift(existingShift);
             } else {
                 editingShiftId = null;
                 shiftForm.reset();
@@ -820,9 +822,65 @@ delCalShftBtn.addEventListener('click', async () => {
     if (confirmed) {
         document.getElementById('shift-modal').close();
         await deleteShift(editingShiftId);
-        
+
     }
 })
+function showShiftDetail(shift, job) {
+    selectedShift = shift;
+
+    const [y, m, d] = shift.shiftDate.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const formattedDate = `${d}. ${CZECH_MONTHS_GENITIVE[m - 1]} ${y}`;
+    const dayName = CZECH_DAYS[dateObj.getDay()];
+
+    const breakdown = shiftHoursBreakdown(shift.shiftDate, shift.clockIn, shift.clockOut);
+    const rate = job.config.jobRate || 0;
+    const weekendPct = job.config.weekendBonus || 0;
+    const nightPct = job.config.nightBonus || 0;
+    const holidayPct = job.config.holidayBonus || 0;
+
+    const basePay = Math.ceil(breakdown.totalHours * rate);
+    const weekendPay = Math.ceil(breakdown.weekendHours * rate * (weekendPct / 100));
+    const nightPay = Math.ceil(breakdown.nightHours * rate * (nightPct / 100));
+    const holidayPay = Math.ceil(breakdown.holidayHours * rate * (holidayPct / 100));
+    const totalPay = basePay + weekendPay + nightPay + holidayPay;
+
+    const note = (shift.shiftNote && shift.shiftNote !== "žádná poznámka") ? shift.shiftNote : "Bez poznámky";
+
+    const content = document.getElementById('shift-detail-content');
+    content.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <strong style="font-size: 1.1rem; color: #f4f4f5;">${formattedDate}</strong>
+                <span style="background: #27272a; color: #a1a1aa; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 600;">${dayName}</span>
+            </div>
+            <div style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 6px;">
+                🕒 <strong>${shift.clockIn} – ${shift.clockOut}</strong> (${breakdown.totalHours} h)
+            </div>
+            <div style="color: #22c55e; font-size: 1.25rem; font-weight: bold; margin-bottom: 12px;">
+                +${totalPay.toLocaleString('cs-CZ')} Kč
+            </div>
+            <div style="color: #a1a1aa; font-size: 0.85rem; background: #18181b; padding: 10px 12px; border-radius: 8px; border: 1px solid #27272a;">
+                📝 ${note}
+            </div>
+        `;
+
+    document.getElementById('shift-detail-modal').showModal();
+}
+document.getElementById('close-shift-detail-btn').addEventListener('click', () => {
+    document.getElementById('shift-detail-modal').close();
+});
+document.getElementById('edit-shift-detail-btn').addEventListener('click', () => {
+    document.getElementById('shift-detail-modal').close();
+    if (selectedShift) editShift(selectedShift);
+});
+document.getElementById('del-shift-detail-btn').addEventListener('click', async () => {
+    if (!selectedShift) return;
+    const confirmed = await confDelModal("Opravdu si přejete tuto směnu smazat?");
+    if (confirmed) {
+        document.getElementById('shift-detail-modal').close();
+        await deleteShift(selectedShift.id);
+    }
+});
 /////
 
 const CURRENT_VERSION = "1.1.0";
