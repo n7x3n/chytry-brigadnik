@@ -573,3 +573,6 @@ span.flatpickr-weekday {
     justify-content: space-between;
     margin-bottom: 8px;
 }
+.hidden{
+    display: none;
+}

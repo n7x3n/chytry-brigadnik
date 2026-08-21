@@ -69,6 +69,7 @@ const jobModalTitle = document.getElementById('job-modal-title');
 const opnShftBrkdwnBtn = document.getElementById('open-shift-breakdown');
 const shiftBrkdwnModal = document.getElementById('shift-breakdown');
 const clsShftBrkdwnBtn = document.getElementById('close-brkdwn-btn');
+const delCalShftBtn = document.getElementById('del-cal-shft-Btn');
 //
 
 //functions
@@ -110,6 +111,7 @@ function editShift(shift) {
     document.getElementById('clock-out-input').value = shift.clockOut;
     document.getElementById('shift-note').value = shift.shiftNote;
     document.getElementById('shift-modal-title').innerText = "Upravit směnu";
+    delCalShftBtn.style.display = 'block';
     document.getElementById('shift-modal').showModal();
 }
 function renderShiftList(job) {
@@ -286,8 +288,23 @@ function renderCalendar(job) {
         const monthStr = String(currentMonth + 1).padStart(2, '0');
         const targetDate = `${currentYear}-${monthStr}-${dayStr}`;
         const hasShift = job.shifts && job.shifts.some(shift => shift.shiftDate === targetDate);
+        const existingShift = job.shifts && job.shifts.find(shift => shift.shiftDate === targetDate);
         const box = document.createElement('div');
         box.className = 'calendar-day-box' + (hasShift ? ' worked' : '');
+        box.addEventListener('click', () => {
+            if (existingShift) {
+                editShift(existingShift);
+            } else {
+                editingShiftId = null;
+                shiftForm.reset();
+                shiftDatePicker.setDate(targetDate);
+                document.getElementById('clock-in-input').value = "08:00";
+                document.getElementById('clock-out-input').value = "16:00";
+                document.getElementById('shift-modal-title').innerText = "Přidat Směnu";
+                delCalShftBtn.style.display = 'none';
+                document.getElementById('shift-modal').showModal();
+            }
+        });
         box.innerText = day;
         grid.appendChild(box);
     }
@@ -512,6 +529,7 @@ jobForm.addEventListener('submit', async (event) => {
 })
 addShiftBtn.addEventListener('click', () => {
     editingShiftId = null;
+    delCalShftBtn.style.display = 'none';
     shiftForm.reset();
 
     shiftDatePicker.setDate(new Date());
@@ -797,6 +815,14 @@ opnShftBrkdwnBtn.addEventListener('click', async () => {
 clsShftBrkdwnBtn.addEventListener('click', () => {
     shiftBrkdwnModal.close();
 });
+delCalShftBtn.addEventListener('click', async () => {
+    const confirmed = await confDelModal("Opravdu si přejete tuto směnu smazat?");
+    if (confirmed) {
+        document.getElementById('shift-modal').close();
+        await deleteShift(editingShiftId);
+        
+    }
+})
 /////
 
 const CURRENT_VERSION = "1.1.0";
