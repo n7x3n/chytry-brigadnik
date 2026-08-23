@@ -873,7 +873,7 @@ document.getElementById('del-shift-detail-btn').addEventListener('click', async 
 });
 /////
 
-const CURRENT_VERSION = "1.1.0";
+const CURRENT_VERSION = "1.2.0";
 
 async function checkForAppUpdates() {
     try {
