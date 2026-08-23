@@ -3,6 +3,11 @@
     margin: 0;
     padding: 0;
     font-family: system-ui, -apple-system, sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
 html,
@@ -573,6 +578,15 @@ span.flatpickr-weekday {
     justify-content: space-between;
     margin-bottom: 8px;
 }
-.hidden{
+
+.hidden {
     display: none;
+}
+
+input,
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }

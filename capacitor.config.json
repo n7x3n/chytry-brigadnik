@@ -6,6 +6,10 @@
     "StatusBar": {
       "style": "DARK",
       "backgroundColor": "#18181b"
+    },
+    "SplashScreen": {
+      "backgroundColor": "#18181b",
+      "showSpinner": false
     }
   }
 }
