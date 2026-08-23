@@ -157,7 +157,7 @@ function renderShiftList(job) {
                 align-items: center;
             `;
         const noteHtml = (shift.shiftNote && shift.shiftNote !== "žádná poznámka")
-            ? `<div style="color: #a1a1aa; font-size: 0.85rem; margin-top: 4px;">📝 ${shift.
+            ? `<div style="color: #a1a1aa; font-size: 0.85rem; margin-top: 4px;">${shift.
                 shiftNote}</div>`
             : '';
         card.innerHTML = `
@@ -167,7 +167,7 @@ function renderShiftList(job) {
                         <span style="background: #27272a; color: #a1a1aa; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 600;">${dayName}</span>
                     </div>
                     <div style="color: #71717a; font-size: 0.85rem;">
-                        🕒 ${shift.clockIn} – ${shift.clockOut} (${hours} h)
+                        ${shift.clockIn} – ${shift.clockOut} (${hours} h)
                     </div>
                     <div style="color: #22c55e; font-weight: bold; font-size: 1.05rem; margin-top: 4px;">
                         +${pay.toLocaleString('cs-CZ')} Kč
@@ -175,11 +175,21 @@ function renderShiftList(job) {
                     ${noteHtml}
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button type="button" class="edit-shift-btn" style="background: #27272a; border: 1px solid #3f3f46; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                        ✏️
+                    <button type="button" class="edit-shift-btn" style="background: #27272a; border: 1px solid #3f3f46; color: white; border-radius: 8px; cursor: pointer; width: 44px; height: 35px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
+                            <path
+                            d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                            <path d="m15 5 4 4" />
+                        </svg>
                     </button>
-                    <button type="button" class="del-shift-btn" style="background: #ef4444; border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                        🗑️
+                    <button type="button" class="del-shift-btn" style="background: #ef4444; border: none; color: white; border-radius: 8px; cursor: pointer; width: 44px; height: 35px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash">
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
                     </button>
                 </div>
             `;
@@ -893,6 +903,8 @@ async function checkForAppUpdates() {
     }
 }
 async function initApp() {
+    const versionEl = document.getElementById('app-version-display');
+    if (versionEl) versionEl.innerText = `v${CURRENT_VERSION}`;
     const jobs = await loadJobs();
     renderJobs(jobs);
     checkForAppUpdates();
