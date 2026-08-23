@@ -590,3 +590,11 @@ textarea {
     -ms-user-select: text;
     user-select: text;
 }
+
+.calendar-day-box.today {
+    border: 2px solid #a1a1aa;
+}
+
+.calendar-day-box.worked.today {
+    border: 2px solid #ffffff;
+}
