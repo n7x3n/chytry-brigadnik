@@ -460,6 +460,10 @@ function renderBreakdownData(job) {
         <span>Sváteční příplatek:</span>
         <strong>${holidayPay} Kč</strong>
     </div>
+    <div class="summaryTableStyle">
+        <span>Odhadovaná mzda:</span>
+        <strong>${grossWage.toLocaleString('cs-CZ')} Kč</strong>
+    </div>
     `;
 }
 //
