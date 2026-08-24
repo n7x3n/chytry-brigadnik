@@ -37,14 +37,20 @@
             </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
             <input type="number" id="job-rate" placeholder="Hodinová mzda (Kč)" required>
-            <div style="margin-bottom: 12px;">
-                <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 4px;">Typ
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 6px;">Typ
                     smlouvy / dohody</label>
-                <select id="contract-type"
-                    style="width: 100%; height: 42px; background: #18181b; border: 1px solid #27272a; border-radius: 8px; color: #f4f4f5; padding: 0 10px; font-size: 0.95rem;">
-                    <option value="dpp" selected>DPP - Dohoda o provedení práce</option>
-                    <option value="dpc">DPČ - Dohoda o pracovní činnosti</option>
-                </select>
+                <div
+                    style="display: flex; gap: 8px; background: #18181b; padding: 4px; border: 1px solid #27272a; border-radius: 10px;">
+                    <button type="button" id="btn-type-dpp"
+                        style="flex: 1; height: 38px; border: none; border-radius: 7px; background: #22c55e; color: #09090b; font-weight: bold; cursor: pointer; transition: all 0.15s;">DPP
+                        (limit 10,5k)</button>
+                    <button type="button" id="btn-type-dpc"
+                        style="flex: 1; height: 38px; border: none; border-radius: 7px; background: transparent; color: #a1a1aa; font-weight: 500; cursor: pointer; transition: all 0.15s;">DPČ
+                        (limit 4k)</button>
+                </div>
+                <!-- Skryté políčko, které drží hodnotu pro JavaScript: -->
+                <input type="hidden" id="contract-type" value="dpp">
             </div>
             <div style="text-align: center; font-weight: bold;">
                 <p>Hodiny</p>
