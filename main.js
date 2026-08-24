@@ -271,6 +271,10 @@ function renderSummaryTable(job) {
 
     container.innerHTML = `
             <div class="summaryTableStyle">
+                <span>Odpracované směny:</span>
+                <strong>${monthlyShifts.length}</strong>
+            </div>
+            <div class="summaryTableStyle">
                 <span>Odpracované hodiny:</span>
                 <strong>${totalHours} h</strong>
             </div>
@@ -419,6 +423,10 @@ function renderBreakdownData(job) {
     const grossWage = basePay + weekendPay + nightPay + holidayPay;
     container.innerHTML = `
     <div style="text-align: center; font-weight: bold;"><p>Hodiny</p></div>
+    <div class="summaryTableStyle">
+        <span>Počet směn:</span>
+        <strong>${monthlyShifts.length}</strong>
+    </div>
     <div class="summaryTableStyle">
         <span>Odpracované hodiny:</span>
         <strong>${totalHours} h</strong>
