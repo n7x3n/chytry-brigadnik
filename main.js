@@ -1,8 +1,7 @@
-import { wageCalculator, shiftHoursBreakdown } from './calc_engine.js';
+import { calculateNetWage, shiftHoursBreakdown } from './calc_engine.js';
 import { saveJobs, loadJobs } from './storage.js';
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { App } from '@capacitor/app';
-import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -70,6 +69,7 @@ const opnShftBrkdwnBtn = document.getElementById('open-shift-breakdown');
 const shiftBrkdwnModal = document.getElementById('shift-breakdown');
 const clsShftBrkdwnBtn = document.getElementById('close-brkdwn-btn');
 let selectedShift = null;
+const contractType = document.getElementById('contract-type').value || 'dpp';
 //
 
 //functions
@@ -268,7 +268,7 @@ function renderSummaryTable(job) {
     const nightPay = Math.ceil(totalNightHours * rate * (nightBonusPct / 100));
     const holidayPay = Math.ceil(totalHolidayHours * rate * (holidayBonusPct / 100));
     const totalGross = basePay + weekendPay + nightPay + holidayPay;
-
+    const netResult = calculateNetWage(totalGross, job.config);
     container.innerHTML = `
             <div class="summaryTableStyle">
                 <span>Odpracované směny:</span>
@@ -278,11 +278,15 @@ function renderSummaryTable(job) {
                 <span>Odpracované hodiny:</span>
                 <strong>${totalHours} h</strong>
             </div>
-            <div style="display: flex; justify-content: space-between; color: #22c55e;">
+            <div class="summaryTableStyle" style="color: #22c55e;">
                 <span>Odhadovaná mzda:</span>
                 <strong>${totalGross} Kč</strong>
             </div>
-        `;
+            <div class="summaryTableStyle" style="color: #22c55e;">
+                <span>Čistá mzda na ruku:</span>
+                <strong>${netResult.net.toLocaleString('cs-CZ')} Kč</strong>
+            </div>
+    `;
 }
 function renderCalendar(job) {
     const grid = document.getElementById('calendar-grid');
@@ -304,7 +308,7 @@ function renderCalendar(job) {
         const existingShift = job.shifts && job.shifts.find(shift => shift.shiftDate === targetDate);
         const box = document.createElement('div');
         const todayObj = new Date();
-        const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
+        const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')} -${String(todayObj.getDate()).padStart(2, '0')} `;
         const isToday = (targetDate === todayStr);
         box.className = 'calendar-day-box' + (hasShift ? ' worked' : '') + (isToday ? ' today' : '');
         box.addEventListener('click', () => {
@@ -345,7 +349,7 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
         let val = e.target.value.replace(/\D/g, '');
         if (val.length > 4) val = val.slice(0, 4);
         if (val.length === 1 && parseInt(val, 10) > 2) {
-            e.target.value = `0${val}:`;
+            e.target.value = `0${ val }: `;
             return;
         }
         if (val.length >= 2) {
@@ -357,9 +361,9 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
                 if (mins > 59) mins = 59;
                 const minsStr = val.slice(2).length === 2 ? String(mins).padStart(2, '0') : val.
                     slice(2);
-                e.target.value = `${hoursStr}:${minsStr}`;
+                e.target.value = `${ hoursStr }:${ minsStr } `;
             } else {
-                e.target.value = `${hoursStr}:`;
+                e.target.value = `${ hoursStr }: `;
             }
         } else {
             e.target.value = val;
@@ -373,18 +377,18 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
         }
         const digits = val.replace(/\D/g, '');
         if (digits.length === 1) {
-            e.target.value = `0${digits}:00`;
+            e.target.value = `0${ digits }:00`;
         } else if (digits.length === 2) {
             let h = String(Math.min(23, parseInt(digits, 10) || 0)).padStart(2, '0');
-            e.target.value = `${h}:00`;
+            e.target.value = `${ h }:00`;
         } else if (digits.length === 3) {
             let h = String(Math.min(23, parseInt(digits[0], 10) || 0)).padStart(2, '0');
             let m = String(Math.min(59, parseInt(digits.slice(1), 10) || 0)).padStart(2, '0');
-            e.target.value = `${h}:${m}`;
+            e.target.value = `${ h }:${ m } `;
         } else {
             let h = String(Math.min(23, parseInt(digits.slice(0, 2), 10) || 0)).padStart(2, '0');
             let m = String(Math.min(59, parseInt(digits.slice(2), 10) || 0)).padStart(2, '0');
-            e.target.value = `${h}:${m}`;
+            e.target.value = `${ h }:${ m } `;
         }
     });
 }
@@ -422,7 +426,7 @@ function renderBreakdownData(job) {
     const holidayPay = Math.ceil(holidayHours * rate * (holidayPct / 100));
     const grossWage = basePay + weekendPay + nightPay + holidayPay;
     container.innerHTML = `
-    <div style="text-align: center; font-weight: bold;"><p>Hodiny</p></div>
+        <div div style = "text-align: center; font-weight: bold;" > <p>Hodiny</p></div >
     <div class="summaryTableStyle">
         <span>Počet směn:</span>
         <strong>${monthlyShifts.length}</strong>
@@ -471,7 +475,7 @@ function renderBreakdownData(job) {
 addBtn.addEventListener('click', () => {
     editingJobId = null;
     jobForm.reset();
-
+    document.getElementById('contract-type').value = "dpp";
     document.getElementById('job-weekend-bonus').value = "10";
     document.getElementById('job-night-bonus').value = "10";
     document.getElementById('job-holiday-bonus').value = "100";
@@ -507,6 +511,7 @@ jobForm.addEventListener('submit', async (event) => {
         if (targetJob) {
             targetJob.config = {
                 jobName: name,
+                contractType: contractType,
                 jobRate: rate,
                 weekendBonus: weekendBonus,
                 nightBonus: nightBonus,
@@ -518,7 +523,7 @@ jobForm.addEventListener('submit', async (event) => {
                 kidsCount: kidsCount
             };
             document.getElementById('detail-title').innerText = name;
-            document.getElementById('detail-rate').innerText = `${rate} Kč/h`;
+            document.getElementById('detail-rate').innerText = `${ rate } Kč / h`;
             await updateMonthView();
         }
         editingJobId = null;
@@ -527,6 +532,7 @@ jobForm.addEventListener('submit', async (event) => {
             id: Date.now(),
             config: {
                 jobName: name,
+                contractType: contractType,
                 jobRate: rate,
                 weekendBonus: weekendBonus,
                 nightBonus: nightBonus,
@@ -671,7 +677,7 @@ exportJsonBtn.addEventListener('click', async () => {
     try {
         const content = await loadJobs();
         const data = JSON.stringify(content, null, 2);
-        const fileName = `chytry-brigadnik-export-${new Date().toISOString().split('T')[0]}.json`;
+        const fileName = `chytry - brigadnik -export -${ new Date().toISOString().split('T')[0] }.json`;
 
         await Filesystem.writeFile({
             path: fileName,
@@ -681,7 +687,7 @@ exportJsonBtn.addEventListener('click', async () => {
         });
 
         console.log("Soubor byl přímo uložen do složky Dokumenty.");
-        showAlert("Záloha uložena!", `Soubor ${fileName} byl úspěšně uložen do složky Dokumenty ve vašem telefonu.`);
+        showAlert("Záloha uložena!", `Soubor ${ fileName } byl úspěšně uložen do složky Dokumenty ve vašem telefonu.`);
     } catch (err) {
         console.error("Chyba při exportu:", err);
         showAlert("Chyba exportu", "Nepodařilo se uložit soubor do úložiště.");
@@ -753,7 +759,7 @@ sheetHandleZone.addEventListener('touchmove', (e) => {
     currentY = e.touches[0].clientY;
     const deltaY = currentY - startY;
     if (deltaY > 0) {
-        detailModal.style.transform = `translateY(${deltaY}px)`;
+        detailModal.style.transform = `translateY(${ deltaY }px)`;
     }
 }, { passive: true });
 sheetHandleZone.addEventListener('touchend', () => {
@@ -826,6 +832,7 @@ editJobBtn.addEventListener('click', async () => {
     document.getElementById('job-weekend-bonus').value = currentJob.config.weekendBonus ?? 10;
     document.getElementById('job-night-bonus').value = currentJob.config.nightBonus ?? 10;
     document.getElementById('job-holiday-bonus').value = currentJob.config.holidayBonus ?? 100;
+    document.getElementById('contract-type').value = currentJob.config.contractType || "dpp";
     document.getElementById('job-modal').showModal();
 });
 opnShftBrkdwnBtn.addEventListener('click', async () => {
@@ -842,7 +849,7 @@ function showShiftDetail(shift, job) {
 
     const [y, m, d] = shift.shiftDate.split('-').map(Number);
     const dateObj = new Date(y, m - 1, d);
-    const formattedDate = `${d}. ${CZECH_MONTHS_GENITIVE[m - 1]} ${y}`;
+    const formattedDate = `${ d }. ${ CZECH_MONTHS_GENITIVE[m - 1] } ${ y } `;
     const dayName = CZECH_DAYS[dateObj.getDay()];
 
     const breakdown = shiftHoursBreakdown(shift.shiftDate, shift.clockIn, shift.clockOut);
@@ -861,10 +868,10 @@ function showShiftDetail(shift, job) {
 
     const content = document.getElementById('shift-detail-content');
     content.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <div div style = "display: flex; align-items: center; gap: 8px; margin-bottom: 8px;" >
                 <strong style="font-size: 1.1rem; color: #f4f4f5;">${formattedDate}</strong>
                 <span style="background: #27272a; color: #a1a1aa; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 600;">${dayName}</span>
-            </div>
+            </div >
             <div style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 6px;">
             <strong>${shift.clockIn} – ${shift.clockOut}</strong> (${breakdown.totalHours} h)
             </div>
@@ -874,7 +881,7 @@ function showShiftDetail(shift, job) {
             <div style="color: #a1a1aa; font-size: 0.85rem; background: #18181b; padding: 10px 12px; border-radius: 8px; border: 1px solid #27272a;">
                 ${note}
             </div>
-        `;
+    `;
 
     document.getElementById('shift-detail-modal').showModal();
 }
@@ -905,7 +912,7 @@ async function checkForAppUpdates() {
         const remoteVersion = remoteData.version;
         if (remoteVersion && remoteVersion !== CURRENT_VERSION) {
             const wantsUpdate = await confDelModal(
-                `🎉 Je k dispozici nová verze (v${remoteVersion})!\nPřejete si otevřít stránku ke stažení nového APK?`, "otevřít");
+                `🎉 Je k dispozici nová verze(v${ remoteVersion })!\nPřejete si otevřít stránku ke stažení nového APK ? `, "otevřít");
             if (wantsUpdate) {
                 window.open(remoteData.downloadUrl || 'https://github.com/n7x3n/chytry-brigadnik / releases', '_blank');
             }
@@ -916,7 +923,7 @@ async function checkForAppUpdates() {
 }
 async function initApp() {
     const versionEl = document.getElementById('app-version-display');
-    if (versionEl) versionEl.innerText = `v${CURRENT_VERSION}`;
+    if (versionEl) versionEl.innerText = `v${ CURRENT_VERSION } `;
     const jobs = await loadJobs();
     renderJobs(jobs);
     checkForAppUpdates();

@@ -37,6 +37,15 @@
             </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
             <input type="number" id="job-rate" placeholder="Hodinová mzda (Kč)" required>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 4px;">Typ
+                    smlouvy / dohody</label>
+                <select id="contract-type"
+                    style="width: 100%; height: 42px; background: #18181b; border: 1px solid #27272a; border-radius: 8px; color: #f4f4f5; padding: 0 10px; font-size: 0.95rem;">
+                    <option value="dpp" selected>DPP - Dohoda o provedení práce</option>
+                    <option value="dpc">DPČ - Dohoda o pracovní činnosti</option>
+                </select>
+            </div>
             <div style="text-align: center; font-weight: bold;">
                 <p>Hodiny</p>
             </div>

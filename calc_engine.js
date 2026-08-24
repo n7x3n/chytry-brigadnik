@@ -42,87 +42,6 @@ const config = {
     healthEmployer: 0.09,
     socEmployer: 0.248
 }
-//main wage calculator
-export function wageCalculator(hours, rate, vacHours, vacRate, reward, payer, inv1_2, inv3, ztp, premium, kidsCount) {
-    hours = bad_apples(hours);
-    rate = bad_apples(rate);
-    vacHours = bad_apples(vacHours);
-    vacRate = bad_apples(vacRate);
-    reward = bad_apples(reward);
-    premium = bad_apples(premium);
-    kidsCount = bad_apples(kidsCount);
-    let base_pay = multi(hours, rate);
-    let vacation = multi(vacHours, vacRate);
-    if (reward <= 0) {
-        reward = 0
-    }
-    let true_premium = multi(base_pay, premium / 100) || 0;
-    let reward_premium = true_premium + reward || 0;
-    let grosswage = base_pay + vacation + reward_premium;
-    let health_insur = multi(grosswage, config.healthWorker) || 0;
-    let social_insur = multi(grosswage, config.socWorker) || 0;
-    let tax_base = rounding_hundreds(grosswage) || 0;
-    let basic_tax = multi(tax_base, config.incomeTax) || 0;
-    let tax_payer = 0;
-    let invalidity_1_2 = 0;
-    let invalidity_3 = 0;
-    let ztpValue = 0;
-    if (payer) {
-        tax_payer = config.payerDiscount;
-    }
-    if (inv1_2) {
-        invalidity_1_2 = config.invalidity12;
-    }
-    if (inv3) {
-        invalidity_3 = config.invalidity3;
-    }
-    if (ztp) {
-        ztpValue = config.ztpValue;
-    }
-    let discounts = discount(tax_payer, invalidity_1_2, invalidity_3, ztpValue) || 0;
-    let benefit = 0;
-    if (kidsCount == 1) {
-        benefit = config.kids1;
-    } else if (kidsCount == 2) {
-        benefit = config.kids2;
-    } else if (kidsCount == 3) {
-        benefit = config.kids3;
-    } else if (kidsCount > 3) {
-        benefit = multiple_kids_count(kidsCount);
-    }
-    let discounted_tax = tax_after_discount(basic_tax, discounts);
-    let final_tax = tax_after_benefit(discounted_tax, benefit);
-    let final_tax_checked = 0;
-    let tax_bonus = 0;
-    if (final_tax < 0) {
-        tax_bonus = -final_tax;
-        final_tax_checked = 0;
-    } else {
-        final_tax_checked = final_tax;
-    }
-    let net_pay = take_home_pay(grosswage, health_insur, social_insur, final_tax_checked);
-    let supplement = net_pay + tax_bonus;
-    let emp_health_insur = multi(grosswage, config.healthEmployer);
-    let emp_soc_insur = multi(grosswage, config.socEmployer);
-    return {
-        basePay: base_pay,
-        vacationPay: vacation,
-        gross: grosswage,
-        health: health_insur,
-        social: social_insur,
-        taxBase: tax_base,
-        basicTax: basic_tax,
-        discounts: discounts,
-        benefit: benefit,
-        tax: final_tax_checked,
-        net: net_pay,
-        bonus: tax_bonus,
-        supplement: supplement,
-        empHealth: emp_health_insur,
-        empSocial: emp_soc_insur
-    };
-}
-
 // counting shift hours
 export function shiftHours(clockIn, clockOut) {
     const [inH, inM] = clockIn.split(':').map(Number);
@@ -177,5 +96,55 @@ export function shiftHoursBreakdown(shiftDate, clockIn, clockOut) {
         weekendHours: parseFloat(weekendHours.toFixed(2)),
         nightHours: parseFloat(nightHours.toFixed(2)),
         holidayHours: parseFloat(holidayHours.toFixed(2))
+    };
+}
+export function calculateNetWage(grossWage, jobConfig = {}) {
+    const contractType = jobConfig.contractType || 'dpp';
+    const isPayer = !!jobConfig.taxPayer;
+    const insuranceLimit = (contractType === 'dpc') ? 4000 : 10500;
+    const isInsuranceApplied = (grossWage > insuranceLimit);
+    let healthInsurance = 0;
+    let socialInsurance = 0;
+    if (isInsuranceApplied) {
+        healthInsurance = Math.ceil(grossWage * config.healthWorker);
+        socialInsurance = Math.ceil(grossWage * config.socWorker);
+    }
+    let rawTax = Math.ceil(grossWage * 0.15);
+    let taxDiscount = 0;
+    let finalTax = 0;
+    let taxBonus = 0;
+    if (isPayer) {
+        taxDiscount = 2570;
+        if (jobConfig.inv12) taxDiscount += 210;
+        if (jobConfig.inv3) taxDiscount += 420;
+        if (jobConfig.ztp) taxDiscount += 1345;
+        let kidsBenefit = 0;
+        const kids = parseInt(jobConfig.kidsCount, 10) || 0;
+        if (kids === 1) kidsBenefit = 1267;
+        else if (kids === 2) kidsBenefit = 3127;
+        else if (kids === 3) kidsBenefit = 5447;
+        else if (kids > 3) kidsBenefit = 5447 + (kids - 3) * 2320;
+        const taxAfterDiscounts = rawTax - taxDiscount;
+        if (taxAfterDiscounts > 0) {
+            finalTax = Math.max(0, taxAfterDiscounts - kidsBenefit);
+        } else {
+            finalTax = 0;
+            if (kidsBenefit > 0) {
+                taxBonus = Math.min(kidsBenefit, Math.abs(taxAfterDiscounts));
+            }
+        }
+    } else {
+        finalTax = rawTax;
+    }
+    const netWage = grossWage - healthInsurance - socialInsurance - finalTax + taxBonus;
+    return {
+        gross: grossWage,
+        health: healthInsurance,
+        social: socialInsurance,
+        tax: finalTax,
+        bonus: taxBonus,
+        discounts: taxDiscount,
+        net: netWage,
+        isInsuranceApplied
     };
 }
