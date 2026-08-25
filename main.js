@@ -280,12 +280,13 @@ function renderSummaryTable(job) {
                 <span>Odpracované hodiny:</span>
                 <strong>${totalHours} h</strong>
             </div>
+            <!--
             <div class="summaryTableStyle" style="color: #22c55e;">
                 <span>Odhadovaná mzda:</span>
                 <strong>${totalGross} Kč</strong>
-            </div>
+            </div>-->
             <div class="summaryTableStyle" style="color: #22c55e;">
-                <span>Čistá mzda na ruku:</span>
+                <span>Čistá mzda:</span>
                 <strong>${netResult.net} Kč</strong>
             </div>
     `;
@@ -478,7 +479,7 @@ function renderBreakdownData(job) {
     </div>
     <div class="summaryTableStyle">
         <span>Sociální pojištění:</span>
-        <strong>${netResult.health} Kč</strong>
+        <strong>${netResult.social} Kč</strong>
     </div>
     <div class="summaryTableStyle">
         <span>Záloha na daň z příjmů:</span>
