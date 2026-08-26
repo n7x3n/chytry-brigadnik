@@ -311,7 +311,7 @@ function renderCalendar(job) {
         const existingShift = job.shifts && job.shifts.find(shift => shift.shiftDate === targetDate);
         const box = document.createElement('div');
         const todayObj = new Date();
-        const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')} -${String(todayObj.getDate()).padStart(2, '0')} `;
+        const todayStr = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, '0')}-${String(todayObj.getDate()).padStart(2, '0')}`;
         const isToday = (targetDate === todayStr);
         box.className = 'calendar-day-box' + (hasShift ? ' worked' : '') + (isToday ? ' today' : '');
         box.addEventListener('click', () => {
