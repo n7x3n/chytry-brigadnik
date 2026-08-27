@@ -108,6 +108,22 @@ dialog#detail-modal[open] {
     }
 }
 
+dialog.closing {
+    animation: fadeScaleOut 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeScaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
 dialog#detail-modal.closing {
     animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

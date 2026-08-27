@@ -491,6 +491,15 @@ function renderBreakdownData(job) {
     </div>
     `;
 }
+function closeModalWithAnimation(modal) {
+    if (!modal || !modal.open) return;
+    modal.classList.add('closing');
+    setTimeout(() => {
+        modal.close();
+        modal.classList.remove('closing');
+        if (modal.id === 'detail-modal') modal.style.transform = '';
+    }, 240);
+}
 function setContractType(type) {
     if (!contractTypeInput || !btnDpp || !btnDpc) return;
     contractTypeInput.value = type;
@@ -864,17 +873,7 @@ try {
         const openModals = Array.from(document.querySelectorAll('dialog[open]'));
         if (openModals.length > 0) {
             const topModal = openModals[openModals.length - 1];
-            if (topModal.id === 'detail-modal') {
-                closeDetailModal();
-            } else if (topModal.id === 'job-modal' || topModal.id === 'settings-modal') {
-                topModal.classList.add('closing');
-                setTimeout(() => {
-                    topModal.close();
-                    topModal.classList.remove('closing');
-                }, 240);
-            } else {
-                topModal.close();
-            }
+            closeModalWithAnimation(topModal);
         } else {
             App.exitApp();
         }
