@@ -103,7 +103,7 @@ async function openJobDetail(job) {
     await updateMonthView();
     document.getElementById('detail-modal').showModal();
     document.getElementById('close-detail-btn').addEventListener('click', () => {
-        document.getElementById('detail-modal').close();
+        closeDetailModal();
     });
 }
 function editShift(shift) {
@@ -144,7 +144,7 @@ function renderShiftList(job) {
         }
         let HoursBreakdown = shiftHoursBreakdown(shift.shiftDate, shift.clockIn, shift.clockOut)
         const hours = HoursBreakdown.totalHours
-        const pay = Math.ceil(hours * shift.jobrate);
+        const pay = Math.ceil(hours * job.config.jobRate);
         const formattedDate = `${d}. ${CZECH_MONTHS_GENITIVE[m - 1]} ${y}`;
         const dayName = CZECH_DAYS[shiftDateObj.getDay()];
         const card = document.createElement('div');
@@ -185,7 +185,7 @@ function renderShiftList(job) {
                             <path d="m15 5 4 4" />
                         </svg>
                     </button>
-                    <button type="button" class="del-shift-btn" style="background: #ef4444; border: none; color: white; border-radius: 8px; cursor: pointer; width: 44px; height: 35px;">
+                    <button type="button" class="close-red-btn del-shift-btn" style="cursor: pointer; width: 44px; height: 35px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash">
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
@@ -513,6 +513,17 @@ function setContractType(type) {
 }
 if (btnDpp) btnDpp.addEventListener('click', () => setContractType('dpp'));
 if (btnDpc) btnDpc.addEventListener('click', () => setContractType('dpc'));
+
+function closeDetailModal() {
+    const detailModal = document.getElementById('detail-modal');
+    if (!detailModal || !detailModal.open) return;
+    detailModal.classList.add('closing');
+    setTimeout(() => {
+        detailModal.close();
+        detailModal.classList.remove('closing');
+        detailModal.style.transform = '';
+    }, 240);
+}
 //
 
 addBtn.addEventListener('click', () => {
@@ -853,7 +864,17 @@ try {
         const openModals = Array.from(document.querySelectorAll('dialog[open]'));
         if (openModals.length > 0) {
             const topModal = openModals[openModals.length - 1];
-            topModal.close();
+            if (topModal.id === 'detail-modal') {
+                closeDetailModal();
+            } else if (topModal.id === 'job-modal' || topModal.id === 'settings-modal') {
+                topModal.classList.add('closing');
+                setTimeout(() => {
+                    topModal.close();
+                    topModal.classList.remove('closing');
+                }, 240);
+            } else {
+                topModal.close();
+            }
         } else {
             App.exitApp();
         }
