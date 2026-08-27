@@ -362,7 +362,7 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
         let val = e.target.value.replace(/\D/g, '');
         if (val.length > 4) val = val.slice(0, 4);
         if (val.length === 1 && parseInt(val, 10) > 2) {
-            e.target.value = `0${val}: `;
+            e.target.value = `0${val}:`;
             return;
         }
         if (val.length >= 2) {
@@ -374,9 +374,9 @@ function setupTimeInput(inputElement, defaultValue = "08:00") {
                 if (mins > 59) mins = 59;
                 const minsStr = val.slice(2).length === 2 ? String(mins).padStart(2, '0') : val.
                     slice(2);
-                e.target.value = `${hoursStr}:${minsStr} `;
+                e.target.value = `${hoursStr}:${minsStr}`;
             } else {
-                e.target.value = `${hoursStr}: `;
+                e.target.value = `${hoursStr}:`;
             }
         } else {
             e.target.value = val;
