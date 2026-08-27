@@ -100,6 +100,16 @@ async function openJobDetail(job) {
     currentJobId = job.id;
     document.getElementById('detail-title').innerText = job.config.jobName;
     document.getElementById('detail-rate').innerText = `${job.config.jobRate} Kč/h`;
+    const descEl = document.getElementById('detail-desc');
+    const descBlock = document.getElementById('desc-block');
+    if (descEl) {
+        if (job.config.jobDesc && job.config.jobDesc.trim()) {
+            descEl.innerText = job.config.jobDesc;
+            descBlock.style.display = 'block';
+        } else {
+            descBlock.style.display = 'none';
+        }
+    }
     await updateMonthView();
     document.getElementById('detail-modal').showModal();
     document.getElementById('close-detail-btn').addEventListener('click', () => {
@@ -539,6 +549,7 @@ addBtn.addEventListener('click', () => {
     editingJobId = null;
     setContractType('dpp');
     jobForm.reset();
+    document.getElementById('job-desc').value = '';
     document.getElementById('contract-type').value = "dpp";
     document.getElementById('job-weekend-bonus').value = "10";
     document.getElementById('job-night-bonus').value = "10";
@@ -570,12 +581,14 @@ jobForm.addEventListener('submit', async (event) => {
     const weekendBonus = parseFloat(document.getElementById('job-weekend-bonus').value) || 0;
     const nightBonus = parseFloat(document.getElementById('job-night-bonus').value) || 0;
     const holidayBonus = parseFloat(document.getElementById('job-holiday-bonus').value) || 0;
+    const desc = document.getElementById('job-desc').value.trim();
     let jobs = await loadJobs();
     if (editingJobId) {
         const targetJob = jobs.find(j => j.id === editingJobId);
         if (targetJob) {
             targetJob.config = {
                 jobName: name,
+                jobDesc: desc,
                 contractType: contractType,
                 jobRate: rate,
                 weekendBonus: weekendBonus,
@@ -589,6 +602,16 @@ jobForm.addEventListener('submit', async (event) => {
             };
             document.getElementById('detail-title').innerText = name;
             document.getElementById('detail-rate').innerText = `${rate} Kč / h`;
+            const descEl = document.getElementById('detail-desc');
+            const descBlock = document.getElementById('desc-block');
+            if (descEl) {
+                if (desc) {
+                    descEl.innerText = desc;
+                    descBlock.style.display = 'block'
+                } else {
+                    descBlock.style.display = 'none';
+                }
+            }
             await updateMonthView();
         }
         editingJobId = null;
@@ -597,6 +620,7 @@ jobForm.addEventListener('submit', async (event) => {
             id: Date.now(),
             config: {
                 jobName: name,
+                jobDesc: desc,
                 contractType: contractType,
                 jobRate: rate,
                 weekendBonus: weekendBonus,
@@ -899,6 +923,7 @@ editJobBtn.addEventListener('click', async () => {
     document.getElementById('job-holiday-bonus').value = currentJob.config.holidayBonus ?? 100;
     setContractType(currentJob.config.contractType || 'dpp');
     document.getElementById('contract-type').value = currentJob.config.contractType || "dpp";
+    document.getElementById('job-desc').value = currentJob.config.jobDesc || '';
     document.getElementById('job-modal').showModal();
 });
 opnShftBrkdwnBtn.addEventListener('click', async () => {

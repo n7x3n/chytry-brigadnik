@@ -36,6 +36,7 @@
                 <button type="button" id="cancel-btn" class="close-red-btn">✕</button>
             </div>
             <input type="text" id="job-name" placeholder="Název (např. Kavárna)" required>
+            <input type="text" id="job-desc" placeholder="Popis práce (volitelné) max. 130 znaků" maxlength="130">
             <input type="number" id="job-rate" placeholder="Hodinová mzda (Kč)" required>
             <div style="margin-bottom: 15px;">
                 <label style="font-size: 0.75rem; color: #a1a1aa; display: block; margin-bottom: 6px;">Typ
@@ -200,6 +201,13 @@
                 </button>
             </div>
             <div id="calendar-grid"></div>
+            <div style="margin-top: 10px; margin-bottom: 10px; display: none;" id="desc-block">
+                <hr>
+                <h3>Popis práce</h3>
+                <p id="detail-desc"
+                    style=" margin-top: 7px; color: #a1a1aa; font-size: 0.85rem; border: 1px solid #3f3f46; background-color: #27272a; border-radius: 8px; padding: 3px;">
+                </p>
+            </div>
             <hr>
             <div style="margin-top: 10px; margin-bottom: 10px;">
                 <button type="button" id="add-shift-btn" class="reg-button">+ Přidat
