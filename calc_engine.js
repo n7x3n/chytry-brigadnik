@@ -101,7 +101,7 @@ export function shiftHoursBreakdown(shiftDate, clockIn, clockOut) {
 export function calculateNetWage(grossWage, jobConfig = {}) {
     const contractType = jobConfig.contractType || 'dpp';
     const isPayer = !!jobConfig.taxPayer;
-    const insuranceLimit = (contractType === 'dpc') ? 4000 : 10500;
+    const insuranceLimit = (contractType === 'dpc') ? 4000 : 11999;
     const isInsuranceApplied = (grossWage > insuranceLimit);
     let healthInsurance = 0;
     let socialInsurance = 0;
